@@ -12,5 +12,8 @@
   "type": "commonjs",
   "devDependencies": {
     "electron": "^37.2.6"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
   }
 }

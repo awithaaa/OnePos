@@ -1,15 +1,30 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const { spawn } = require("child_process");
+const fetch = require("node-fetch");
 
 let mainWindow;
+let splashWindow;
 let backendProcess;
 
-function createWindow() {
+function createSplash() {
+  splashWindow = new BrowserWindow({
+    width: 400,
+    height: 300,
+    frame: false,
+    transparent: false,
+    alwaysOnTop: true,
+    center: true,
+  });
+
+  splashWindow.loadFile(path.join(__dirname, "splash.html"));
+}
+
+function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    title: "OnePos",
+    show: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -17,15 +32,13 @@ function createWindow() {
   });
 
   mainWindow.removeMenu();
-  // mainWindow.loadFile(path.join(__dirname, '../frontend/build/index.html'));
   mainWindow.loadURL("http://localhost:3000");
 
-  // Start the backend
-  const backendPath = path.join(__dirname, "../backend");
-  backendProcess = spawn("npm", ["run", "start:dev"], {
-    cwd: backendPath,
-    shell: true,
-    stdio: "inherit",
+  mainWindow.once("ready-to-show", () => {
+    if (splashWindow) {
+      splashWindow.destroy();
+    }
+    mainWindow.show();
   });
 
   mainWindow.on("closed", () => {
@@ -33,12 +46,49 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+async function waitForServer(url, timeout = 15000, interval = 500) {
+  const start = Date.now();
+
+  while (Date.now() - start < timeout) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        return true;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    await new Promise((r) => setTimeout(r, interval));
+  }
+  return false;
+}
+
+app.whenReady().then(async () => {
+  createSplash();
+
+  // Start backend
+  const backendPath = path.join(__dirname, "../backend");
+  backendProcess = spawn("npm", ["run", "start:dev"], {
+    cwd: backendPath,
+    shell: true,
+    stdio: "inherit",
+  });
+
+  const backendReady = await waitForServer("http://localhost:8000/api");
+  const frontendReady = await waitForServer("http://localhost:3000");
+
+  if (backendReady && frontendReady) {
+    createMainWindow();
+  } else {
+    console.error("Failed to connect to backend or frontend in time");
+    app.quit();
+  }
+});
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
 app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
 });
