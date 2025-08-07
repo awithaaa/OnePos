@@ -38,7 +38,7 @@ function createMainWindow() {
   });
 
   mainWindow.removeMenu();
-  mainWindow.loadURL("http://localhost:3000");
+  mainWindow.loadURL("http://localhost:5173");
 
   mainWindow.once("ready-to-show", () => {
     if (splashWindow) {
@@ -81,7 +81,7 @@ app.whenReady().then(async () => {
   });
 
   const backendReady = await waitForServer("http://localhost:8000/api");
-  const frontendReady = await waitForServer("http://localhost:3000");
+  const frontendReady = await waitForServer("http://localhost:5173");
 
   if (backendReady && frontendReady) {
     createMainWindow();
