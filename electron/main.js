@@ -15,6 +15,12 @@ function createSplash() {
     transparent: false,
     alwaysOnTop: true,
     center: true,
+    icon:
+      process.platform === "win32"
+        ? path.join(__dirname, "icon.ico")
+        : process.platform === "darwin"
+        ? path.join(__dirname, "icon.icns")
+        : path.join(__dirname, "icon.png"),
   });
 
   splashWindow.loadFile(path.join(__dirname, "splash.html"));
