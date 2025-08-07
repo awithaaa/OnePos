@@ -25,6 +25,12 @@ function createMainWindow() {
     width: 1200,
     height: 800,
     show: false,
+    icon:
+      process.platform === "win32"
+        ? path.join(__dirname, "icon.ico")
+        : process.platform === "darwin"
+        ? path.join(__dirname, "icon.icns")
+        : path.join(__dirname, "icon.png"),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
