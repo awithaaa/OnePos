@@ -1,4 +1,15 @@
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
+
 export default function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    login();
+    navigate("/dashboard");
+  };
+
   return (
     <>
       <div className="bg-[#e8eae6] min-h-screen flex justify-center items-center">
@@ -15,11 +26,14 @@ export default function Login() {
             </div>
 
             <div className="mt-10">
-              <button className="w-64 py-3 bg-black text-white rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer">
+              <button
+                onClick={handleLogin}
+                className="w-64 py-3 bg-black text-white rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
+              >
                 Login
               </button>
-              <p className="mt-2 text-center text-blue-500 underline">
-                Forgot Password
+              <p className="mt-2 text-sm text-center text-blue-500 cursor-pointer">
+                Forgot Password ?
               </p>
             </div>
           </div>
