@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import homeIcon from "../assets/home.svg";
 import usersIcon from "../assets/user-group.svg";
 import billIcon from "../assets/receipt.svg";
@@ -8,8 +8,11 @@ import settingIcon from "../assets/settings.svg";
 import logoutIcon from "../assets/logout.svg";
 
 import logo from "/icon-bg.png";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function DashboardLayout() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname.split("/dashboard");
 
@@ -20,6 +23,11 @@ export default function DashboardLayout() {
     { name: "Payment", img: paymentIcon, to: "/payment" },
     { name: "User", img: usersIcon, to: "/users" },
   ];
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] ">
@@ -65,7 +73,7 @@ export default function DashboardLayout() {
                   />
                 </Link>
               ) : (
-                <Link to={`/dashboard/settings`}>
+                <Link to={`/`}>
                   <img
                     src={settingIcon}
                     alt="Settings"
@@ -73,13 +81,13 @@ export default function DashboardLayout() {
                   />
                 </Link>
               )}
-              <Link to={`/dashboard/settings`}>
+              <button onClick={handleLogout}>
                 <img
                   src={logoutIcon}
                   alt="logout"
                   className="w-10 rounded-full p-2 hover:bg-red-200 transition"
                 />
-              </Link>
+              </button>
             </div>
           </div>
         </div>

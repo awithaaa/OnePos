@@ -1,15 +1,13 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./dashboard/Dashbord";
 import Login from "./auth/Login";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./dashboard/layout";
 import Users from "./dashboard/users/Users";
+import NotFound from "./Not-found";
 
 function App() {
-  const [isAuthenticated, setAuthenticated] = useState<boolean>();
-
   return (
     <AuthProvider>
       <Router>
@@ -27,7 +25,7 @@ function App() {
             <Route path="users" element={<Users />} />
             {/* <Route path="bill" element={<Bill />} /> */}
           </Route>
-          <Route path="*" element={<Link to={"/dashboard"}>Redirect</Link>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </AuthProvider>
