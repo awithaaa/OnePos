@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import ErrorDialog from "../components/ErrorDialog";
 
 export default function Login() {
   const { login } = useAuth();
@@ -7,6 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleLogin = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -16,6 +18,7 @@ export default function Login() {
       await login(email, password);
     } catch (error: any) {
       setErr(error?.response?.data?.message || error.message || "Login failed");
+      setIsDialogOpen(true);
     } finally {
       setLoading(false);
     }
@@ -54,6 +57,11 @@ export default function Login() {
           </div>
         </div>
       </div>
+      <ErrorDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        message={err}
+      />
     </>
   );
 }
