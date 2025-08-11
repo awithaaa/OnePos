@@ -1,13 +1,24 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Login() {
   const { login } = useAuth();
-  const navigate = useNavigate();
+  const [email, setEmail] = useState("avwithanage2006@gmail.com");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
-  const handleLogin = () => {
-    login();
-    navigate("/dashboard");
+  const handleLogin = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    setLoading(true);
+    setErr(null);
+    try {
+      await login(email, password);
+    } catch (error: any) {
+      setErr(error?.response?.data?.message || error.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -22,7 +33,11 @@ export default function Login() {
 
             <div className="mt-10 flex flex-col gap-1">
               <label className="ml-4">Password /Pin</label>
-              <input className="block w-80 rounded-4xl bg-white px-3.5 py-3 text-base text-gray-900 outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900" />
+              <input
+                className="block w-80 rounded-4xl bg-white px-3.5 py-3 text-base text-gray-900 outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
 
             <div className="mt-10">
