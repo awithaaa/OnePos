@@ -38,6 +38,13 @@ export class AuthService {
     return null;
   }
 
+  async getMe(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) return null;
+    const { password, ...rest } = user;
+    return rest;
+  }
+
   async getTokens(userId: number, email: string, role: string) {
     const accessToken = this.jwtService.sign(
       { sub: userId, email, role },

@@ -4,7 +4,16 @@ import api from "../services/api";
 import { saveTokens, clearTokens, getAccessToken } from "../services/token";
 import { useNavigate } from "react-router-dom";
 
+interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+}
+
 type AuthContextType = {
+  user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -19,6 +28,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [accessToken, setAccessTokenState] = useState<string | null>(
     getAccessToken()
   );
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,24 +37,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setAccessTokenState(getAccessToken());
   }, []);
 
+  const fetchUser = async () => {
+    try {
+      const { data } = await api.get("/auth/me");
+      setUser(data);
+    } catch (e) {
+      console.log(e);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const login = async (email: string, password: string) => {
     const res = await api.post("/auth/login", { email, password });
     const { access_token, refresh_token } = res.data;
     if (!access_token) throw new Error("No access token from login");
     saveTokens(access_token, refresh_token);
     setAccessTokenState(access_token);
+    await fetchUser();
     navigate("/dashboard");
   };
 
   const logout = () => {
     clearTokens();
     setAccessTokenState(null);
+    setUser(null);
     navigate("/login");
   };
 
   return (
     <AuthContext.Provider
       value={{
+        user,
         isAuthenticated: !!accessToken,
         login,
         logout,

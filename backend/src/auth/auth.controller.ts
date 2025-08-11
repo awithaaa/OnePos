@@ -28,10 +28,10 @@ export class AuthController {
     );
   }
 
+  @Get('me')
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  async getProfile(@Request() req) {
+    return this.authService.getMe(req.user.email);
   }
 
   @Post('login')
