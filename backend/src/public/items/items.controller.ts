@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -9,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { AddItemDto } from './dto/add-item.dto';
+import { UpdateItemDto } from './dto/update-item.dto';
 
 @Controller('items')
 export class ItemsController {
@@ -30,5 +32,15 @@ export class ItemsController {
     if (id) return this.itemsService.getItemsById(id);
     if (name) return this.itemsService.getItemsByName(name);
     return this.itemsService.getItems();
+  }
+
+  @Patch(':id')
+  async updateItemById(@Param('id') id: number, @Body() data: UpdateItemDto) {
+    return this.itemsService.updateItemById(id, data);
+  }
+
+  @Delete(':id')
+  async deleteItemById(@Param('id') id: number) {
+    return this.itemsService.deleteItemById(id);
   }
 }
