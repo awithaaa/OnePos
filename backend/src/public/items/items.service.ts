@@ -8,34 +8,41 @@ export class ItemsService {
   constructor(private prisma: PrismaService) {}
 
   async addItem(data: AddItemDto) {
-    const item = this.prisma.item.create({ data: data });
+    const item = await this.prisma.item.create({
+      data: {
+        name: data.name,
+        brand: data.brand,
+        price: data.price,
+        salePrice: data.salePrice,
+      },
+    });
     return { message: 'Item added succesfully!', item: item };
   }
 
-  async getItems(start?: number, size?: number) {
+  async getItems({ start, size = 10 }: { start?: number; size?: number } = {}) {
     if (start) {
-      return this.prisma.item.findMany({ skip: start, take: size });
+      return await this.prisma.item.findMany({ skip: start, take: size });
     }
-    return this.prisma.item.findMany();
+    return await this.prisma.item.findMany();
   }
 
   async getItemsById(id: number) {
-    const item = this.prisma.item.findUnique({ where: { id: id } });
+    const item = await this.prisma.item.findUnique({ where: { id: id } });
     if (!item) throw new NotFoundException('Item not found!');
     return item;
   }
 
   async getItemsByName(name: string) {
-    const item = this.prisma.item.findMany({ where: { name: name } });
+    const item = await this.prisma.item.findMany({ where: { name: name } });
     if (!item) throw new NotFoundException('Items not found!');
     return item;
   }
 
   async updateItemById(id: number, data: UpdateItemDto) {
-    const item = this.prisma.item.findUnique({ where: { id: id } });
+    const item = await this.prisma.item.findUnique({ where: { id: id } });
     if (!item) throw new NotFoundException('Items not found!');
 
-    const updateItem = this.prisma.item.update({
+    const updateItem = await this.prisma.item.update({
       where: { id: id },
       data: data,
     });
@@ -43,10 +50,10 @@ export class ItemsService {
   }
 
   async deleteItemById(id: number) {
-    const item = this.prisma.item.findUnique({ where: { id: id } });
+    const item = await this.prisma.item.findUnique({ where: { id: id } });
     if (!item) throw new NotFoundException('Items not found!');
 
-    this.prisma.item.delete({ where: { id: id } });
+    await this.prisma.item.delete({ where: { id: id } });
     return { message: 'Item deleted succesfully!' };
   }
 }
