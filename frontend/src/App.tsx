@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./dashboard/layout";
 import Users from "./dashboard/users/Users";
 import NotFound from "./Not-found";
+import Store from "./dashboard/store/Store";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             }
           >
             <Route index element={<Dashboard />} />
+            <Route path="store" element={<Store />} />
             <Route path="users" element={<Users />} />
             {/* <Route path="bill" element={<Bill />} /> */}
           </Route>
