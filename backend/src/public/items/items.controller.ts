@@ -41,10 +41,7 @@ export class ItemsController {
       return this.itemsService.getItemsByName(name);
     }
     if (start !== undefined && size !== undefined) {
-      return this.itemsService.getItems({
-        start: Number(start),
-        size: Number(size),
-      });
+      return this.itemsService.getItems(Number(start), Number(size));
     }
     return this.itemsService.getItems();
   }

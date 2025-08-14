@@ -19,8 +19,8 @@ export class ItemsService {
     return { message: 'Item added succesfully!', item: item };
   }
 
-  async getItems({ start, size = 10 }: { start?: number; size?: number } = {}) {
-    if (start) {
+  async getItems(start?: number, size?: number) {
+    if (start !== undefined && size !== undefined) {
       return await this.prisma.item.findMany({ skip: start, take: size });
     }
     return await this.prisma.item.findMany();
@@ -33,7 +33,14 @@ export class ItemsService {
   }
 
   async getItemsByName(name: string) {
-    const item = await this.prisma.item.findMany({ where: { name: name } });
+    const item = await this.prisma.item.findMany({
+      where: {
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      },
+    });
     if (!item) throw new NotFoundException('Items not found!');
     return item;
   }
