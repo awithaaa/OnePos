@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -21,8 +20,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 export class ItemsController {
   constructor(private itemsService: ItemsService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @UseGuards(JwtAuthGuard)
   @Post()
   async addItem(@Body() data: AddItemDto) {
     return this.itemsService.addItem(data);
@@ -31,21 +29,21 @@ export class ItemsController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getItems(
-    @Query('start', ParseIntPipe) start?: number,
-    @Query('size', ParseIntPipe) size?: number,
-    @Query('id', ParseIntPipe) id?: number,
+    @Query('start') start?: string,
+    @Query('size') size?: string,
+    @Query('id') id?: string,
     @Query('name') name?: string,
   ) {
     if (id) {
-      return this.itemsService.getItemsById(id);
+      return this.itemsService.getItemsById(Number(id));
     }
     if (name) {
       return this.itemsService.getItemsByName(name);
     }
     if (start !== undefined && size !== undefined) {
       return this.itemsService.getItems({
-        start: start,
-        size: size,
+        start: Number(start),
+        size: Number(size),
       });
     }
     return this.itemsService.getItems();

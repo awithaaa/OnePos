@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -6,6 +6,7 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
+import api from "../../services/api";
 
 interface DialogProps {
   isOpen: boolean;
@@ -13,6 +14,38 @@ interface DialogProps {
 }
 
 export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
+  const [name, setName] = useState("");
+  const [brand, setBrand] = useState("");
+  const [price, setPrice] = useState<number | "">("");
+  const [salePrice, setSalePrice] = useState<number | "">("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setError(null);
+    setLoading(true);
+
+    try {
+      const res = await api.post("/items", {
+        name,
+        brand,
+        price: Number(price),
+        salePrice: Number(salePrice),
+      });
+
+      console.log("Item added:", res.data);
+      setLoading(false);
+      onClose();
+    } catch (err: any) {
+      setLoading(false);
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Something went wrong, please try again.");
+      }
+    }
+  };
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -59,6 +92,8 @@ export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
                       <input
                         className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
                         type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                       />
                     </div>
 
@@ -67,6 +102,8 @@ export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
                       <input
                         className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
                         type="text"
+                        value={brand}
+                        onChange={(e) => setBrand(e.target.value)}
                       />
                     </div>
 
@@ -77,6 +114,8 @@ export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
                       <input
                         className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
                         type="number"
+                        value={price}
+                        onChange={(e) => setPrice(Number(e.target.value))}
                       />
                     </div>
 
@@ -87,10 +126,19 @@ export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
                       <input
                         className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
                         type="number"
+                        value={salePrice}
+                        onChange={(e) => setSalePrice(Number(e.target.value))}
                       />
                     </div>
                   </div>
                 </div>
+
+                {/* Error Box */}
+                {error && (
+                  <div className="mt-4 p-2 text-sm text-red-700 bg-red-100 border border-red-400 rounded">
+                    {error}
+                  </div>
+                )}
 
                 <div className="mt-6 flex flex-col items-center">
                   <div className="mb-4 w-full h-0.5 bg-neutral-200"></div>
@@ -98,9 +146,9 @@ export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
                   <button
                     type="button"
                     className="w-[90%] py-2.5 bg-black text-white font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
-                    onClick={onClose}
+                    onClick={handleSubmit}
                   >
-                    Process
+                    {loading ? "Processing..." : "Process"}
                   </button>
                 </div>
               </DialogPanel>
