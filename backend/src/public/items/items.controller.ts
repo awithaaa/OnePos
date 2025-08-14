@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -54,13 +53,13 @@ export class ItemsController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateItemById(@Param('id') id: number, @Body() data: UpdateItemDto) {
-    return this.itemsService.updateItemById(id, data);
+    return this.itemsService.updateItemById(Number(id), data);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Delete(':id')
   async deleteItemById(@Param('id') id: number) {
-    return this.itemsService.deleteItemById(id);
+    return this.itemsService.deleteItemById(Number(id));
   }
 }
