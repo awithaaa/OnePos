@@ -80,7 +80,7 @@ app.whenReady().then(async () => {
 
   // Start backend
   const backendPath = path.join(__dirname, "../backend");
-  backendProcess = spawn("npm", ["run", "start"], {
+  backendProcess = spawn("npm", ["run", "start:dev"], {
     cwd: backendPath,
     shell: true,
     stdio: "inherit",

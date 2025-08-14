@@ -6,7 +6,7 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import api from "../../services/api";
+import { api } from "../../services/api";
 
 interface DialogProps {
   isOpen: boolean;
@@ -32,8 +32,10 @@ export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
         price: Number(price),
         salePrice: Number(salePrice),
       });
-
-      console.log("Item added:", res.data);
+      setName("");
+      setBrand("");
+      setPrice("");
+      setSalePrice("");
       setLoading(false);
       onClose();
     } catch (err: any) {
@@ -41,6 +43,7 @@ export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
       if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else {
+        console.log(err);
         setError("Something went wrong, please try again.");
       }
     }

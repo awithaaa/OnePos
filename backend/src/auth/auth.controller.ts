@@ -38,13 +38,12 @@ export class AuthController {
   async login(@Body() body: UserLoginDto, @Res({ passthrough: true }) res) {
     const tokens = await this.authService.login(body.email, body.password);
 
-    // Set refresh token in HttpOnly cookie
     res.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      path: '/auth/refresh',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // match refresh expiry
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return { access_token: tokens.access_token };
@@ -57,12 +56,12 @@ export class AuthController {
 
     const tokens = await this.authService.refreshTokens(token);
 
-    // rotate cookie
+    console.log('refreshed');
     res.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      path: '/auth/refresh',
+      path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -75,7 +74,8 @@ export class AuthController {
     const user = req.user;
     const token = req.cookies?.refresh_token;
     await this.authService.logout(user.userId, token);
-    res.clearCookie('refresh_token', { path: '/auth/refresh' });
+
+    res.clearCookie('refresh_token', { path: '/' });
     return { ok: true };
   }
 }

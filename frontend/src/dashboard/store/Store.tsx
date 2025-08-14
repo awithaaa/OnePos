@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import AddItemDialogBox from "../../components/Dialog/Add-Item-Dialog";
-import { BACKEND_URL } from "../../constant";
-import api from "../../services/api";
+import { api } from "../../services/api";
 
 export default function Store() {
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -17,22 +16,28 @@ export default function Store() {
       }
     };
     fetchItems();
-  }, [isItems]);
+  }, []);
   return (
     <>
-      <div className="bg-[#f5f5f5] min-h-[calc(100vh-100px)] px-4 pb-4">
+      <div className="bg-[#f5f5f5] min-h-[calc(100vh-100px)] px-10 pb-4 mt-1">
         <div>
-          <h1>Item List</h1>
+          <div className="w-full flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Item List</h1>
+            <div
+              className="flex items-center justify-center px-6 py-1.5 rounded-lg p-4 text-center font-medium cursor-pointer bg-black text-white hover:bg-white hover:text-black hover:outline-2 transition"
+              onClick={() => setDialogOpen(true)}
+            >
+              Add Item
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <div className="w-full h-10 bg-black rounded-t-lg"></div>
+          </div>
+
           {isItems?.map((item) => (
             <div key={item.id}>{item.name}</div>
           ))}
-        </div>
-        <div
-          className="flex flex-col bg-white items-center justify-center gap-3 w-32 h-32 rounded-lg p-4 text-center cursor-pointer"
-          onClick={() => setDialogOpen(true)}
-        >
-          <span className="font-bold text-5xl">+</span>
-          Add Item
         </div>
       </div>
 
