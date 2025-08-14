@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  BrowserRouter,
-} from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Dashboard from "./dashboard/Dashbord";
 import Login from "./auth/Login";
 import { AuthProvider } from "./contexts/AuthContext";

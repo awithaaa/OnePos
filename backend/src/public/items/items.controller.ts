@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -30,21 +31,21 @@ export class ItemsController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getItems(
-    @Query('start') start?: string,
-    @Query('size') size?: string,
-    @Query('id') id?: string,
+    @Query('start', ParseIntPipe) start?: number,
+    @Query('size', ParseIntPipe) size?: number,
+    @Query('id', ParseIntPipe) id?: number,
     @Query('name') name?: string,
   ) {
     if (id) {
-      return this.itemsService.getItemsById(Number(id));
+      return this.itemsService.getItemsById(id);
     }
     if (name) {
       return this.itemsService.getItemsByName(name);
     }
     if (start !== undefined && size !== undefined) {
       return this.itemsService.getItems({
-        start: Number(start),
-        size: Number(size),
+        start: start,
+        size: size,
       });
     }
     return this.itemsService.getItems();
