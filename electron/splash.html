@@ -4,22 +4,23 @@
     <title>Loading...</title>
     <style>
       body {
-        background: #282c34;
+        background: #ffffff;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
+        text-align: center;
         margin: 0;
-        color: white;
+        color: rgb(0, 0, 0);
         font-family: Arial, sans-serif;
       }
       .loader {
-        border: 6px solid #f3f3f3;
-        border-top: 6px solid #61dafb;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
+        width: 80px;
+        height: 80px;
+      }
+      .loader-img {
+        width: 80px;
+        height: 80px;
       }
       @keyframes spin {
         0% {
@@ -33,8 +34,11 @@
   </head>
   <body>
     <div>
-      <div class="loader"></div>
-      <p>Loading POS System...</p>
+      <div class="loader">
+        <img src="icon-bg.png" class="loader-img" />
+      </div>
+      <h2>OnePos</h2>
+      <p style="margin-top: -10px">Loading...</p>
     </div>
   </body>
 </html>
