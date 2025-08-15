@@ -31,6 +31,8 @@ export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
       const res = await api.post("/items", {
         name,
         brand,
+        suk,
+        discount: Number(discount),
         price: Number(price),
         salePrice: Number(salePrice),
       });

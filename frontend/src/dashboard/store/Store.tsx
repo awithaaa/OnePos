@@ -7,6 +7,7 @@ export default function Store() {
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isItems, setItems] = useState<any[]>();
   const [isStart, setStart] = useState<number>(1);
+  const [isSearch, setSearch] = useState<string | "">("");
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -19,6 +20,22 @@ export default function Store() {
     };
     fetchItems();
   }, [isStart]);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const fetchItems = async () => {
+        try {
+          const res = await api.get(`/items?name=${isSearch}`);
+          setItems(res.data);
+          setSearch("");
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchItems();
+    }
+  };
 
   const handlePrevious = () => {
     setStart(isStart - 9);
@@ -35,11 +52,23 @@ export default function Store() {
         <div>
           <div className="w-full flex justify-between items-center">
             <h1 className="text-2xl font-bold">Item List</h1>
-            <div
-              className="flex items-center justify-center px-6 py-1.5 rounded-lg p-4 text-center font-medium cursor-pointer bg-black text-white hover:bg-white hover:text-black hover:outline-2 transition"
-              onClick={() => setDialogOpen(true)}
-            >
-              Add Item
+            <div className="flex gap-4">
+              <div>
+                <input
+                  className="w-64 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+                  type="text"
+                  placeholder="Search Items"
+                  value={isSearch}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
+              <div
+                className="flex items-center justify-center px-6 py-1.5 rounded-lg p-4 text-center font-medium cursor-pointer bg-black text-white hover:bg-white hover:text-black hover:outline-2 transition"
+                onClick={() => setDialogOpen(true)}
+              >
+                Add Item
+              </div>
             </div>
           </div>
 
