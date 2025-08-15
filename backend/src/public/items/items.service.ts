@@ -23,9 +23,16 @@ export class ItemsService {
 
   async getItems(start?: number, size?: number) {
     if (start !== undefined && size !== undefined) {
-      return await this.prisma.item.findMany({ skip: start, take: size });
+      const count = await this.prisma.item.count();
+      const items = await this.prisma.item.findMany({
+        skip: start,
+        take: size,
+      });
+      return { count, items };
     }
-    return await this.prisma.item.findMany();
+    const count = await this.prisma.item.count();
+    const items = await this.prisma.item.findMany({});
+    return { count, items };
   }
 
   async getItemsById(id: number) {
@@ -44,7 +51,8 @@ export class ItemsService {
       },
     });
     if (!item) throw new NotFoundException('Items not found!');
-    return item;
+    const count = item.length;
+    return { item, count };
   }
 
   async updateItemById(id: number, data: UpdateItemDto) {

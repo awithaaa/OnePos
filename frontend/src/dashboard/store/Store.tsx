@@ -10,29 +10,36 @@ export default function Store() {
   const [isStart, setStart] = useState<number>(1);
   const [isSearch, setSearch] = useState<string | "">("");
   const [isFilters, setFilters] = useState<string>("");
+  const [isCount, setCount] = useState<string>("");
+
+  const fetchItems = async () => {
+    try {
+      const res = await api.get(`/items?start=${isStart - 1}&size=9`);
+      setItems(res.data.items);
+      let end = 0;
+      let start = 0;
+      if (res.data.count < isStart + 9) {
+        end = res.data.count + 1;
+      } else {
+        end = isStart + 9;
+      }
+      if (isStart == 1) {
+        start = isStart;
+      } else {
+        start = isStart + 1;
+      }
+      setCount(`Showing ${start} to ${end} of ${res.data.count + 1} results`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const res = await api.get(`/items?start=${isStart - 1}&size=9`);
-        setItems(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     fetchItems();
   }, [isStart]);
 
   const handleFilter = () => {
     setFilters("");
-    const fetchItems = async () => {
-      try {
-        const res = await api.get(`/items?start=${isStart - 1}&size=9`);
-        setItems(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     fetchItems();
   };
 
@@ -42,8 +49,11 @@ export default function Store() {
       const fetchItems = async () => {
         try {
           const res = await api.get(`/items?name=${isSearch}`);
-          setItems(res.data);
+          setItems(res.data.item);
           setFilters(`Search: ${isSearch}`);
+          setCount(
+            `Showing ${isStart} to ${res.data.count} of ${res.data.count} results`
+          );
           setSearch("");
         } catch (error) {
           console.log(error);
@@ -59,7 +69,6 @@ export default function Store() {
 
   const handleNext = () => {
     setStart(isStart + 9);
-    console.log(isStart);
   };
 
   return (
@@ -102,21 +111,26 @@ export default function Store() {
           <div className="mt-4">
             {isItems && <Table data={isItems} />}
 
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                type="button"
-                className="px-6 py-2 bg-white text-black font-medium rounded-xl hover:bg-black hover:text-white outline-2  transition cursor-pointer"
-                onClick={handlePrevious}
-              >
-                Previous
-              </button>
-              <button
-                type="button"
-                className="px-6 py-2 bg-black text-white font-medium rounded-xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
-                onClick={handleNext}
-              >
-                Next
-              </button>
+            <div className="bg-white rounded-b-xl flex items-center justify-between gap-4 py-4 px-4">
+              <div>
+                <p className="font-medium">{isCount}</p>
+              </div>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  className="px-6 py-2 bg-white text-black font-medium rounded-xl hover:bg-black hover:text-white outline-2  transition cursor-pointer"
+                  onClick={handlePrevious}
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  className="px-6 py-2 bg-black text-white font-medium rounded-xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
+                  onClick={handleNext}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         </div>

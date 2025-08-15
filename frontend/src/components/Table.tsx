@@ -18,7 +18,7 @@ export default function Table({ data }: Props) {
   ];
   return (
     <>
-      <table className="table-fixed w-full  rounded-xl overflow-hidden">
+      <table className="table-fixed w-full  rounded-t-xl overflow-hidden">
         <thead className="w-full h-10 bg-black rounded-t-lg text-white">
           <tr>
             {columns.map((col, index) => (
@@ -33,10 +33,7 @@ export default function Table({ data }: Props) {
         </thead>
         <tbody className="bg-white ">
           {data.map((item) => (
-            <tr
-              key={item.id}
-              className="border-b border-gray-200 last:border-b-0"
-            >
+            <tr key={item.id} className="border-b border-gray-200">
               <td className="border-r-1 border-l-0 border-gray-200 px-4 py-4 text-center">
                 {item.id}
               </td>
