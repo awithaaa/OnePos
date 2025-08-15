@@ -34,6 +34,8 @@ model Item {
   id      Int @id @default(autoincrement())
   name    String
   brand   String?
+  suk     String? @unique
+  discount   Decimal?  @db.Decimal(10,2)
   price   Decimal  @db.Decimal(10,2)
   salePrice   Decimal  @db.Decimal(10,2)
  

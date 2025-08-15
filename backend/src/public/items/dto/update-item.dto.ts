@@ -7,6 +7,12 @@ export class UpdateItemDto {
   @IsString()
   brand?: string;
 
+  @IsString()
+  suk?: string;
+
+  @IsNumber()
+  discount?: number;
+
   @IsNumber()
   price?: number;
 

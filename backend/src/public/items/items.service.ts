@@ -12,6 +12,8 @@ export class ItemsService {
       data: {
         name: data.name,
         brand: data.brand,
+        suk: data.suk,
+        discount: data.discount,
         price: data.price,
         salePrice: data.salePrice,
       },

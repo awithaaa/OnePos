@@ -16,6 +16,8 @@ interface DialogProps {
 export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
+  const [suk, setSuk] = useState("");
+  const [discount, setDiscount] = useState<number | "">("");
   const [price, setPrice] = useState<number | "">("");
   const [salePrice, setSalePrice] = useState<number | "">("");
   const [error, setError] = useState<string | null>(null);
@@ -34,6 +36,8 @@ export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
       });
       setName("");
       setBrand("");
+      setSuk("");
+      setDiscount("");
       setPrice("");
       setSalePrice("");
       setLoading(false);
@@ -107,6 +111,26 @@ export default function AddItemDialogBox({ isOpen, onClose }: DialogProps) {
                         type="text"
                         value={brand}
                         onChange={(e) => setBrand(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label className="ml-1 mb-1">SUK</label>
+                      <input
+                        className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+                        type="text"
+                        value={suk}
+                        onChange={(e) => setSuk(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label className="ml-1 mb-1">Discount</label>
+                      <input
+                        className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+                        type="text"
+                        value={discount}
+                        onChange={(e) => setDiscount(Number(e.target.value))}
                       />
                     </div>
 

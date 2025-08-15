@@ -9,6 +9,14 @@ export class AddItemDto {
   @IsOptional()
   brand?: string;
 
+  @IsString()
+  @IsOptional()
+  suk?: string;
+
+  @IsNumber()
+  @IsOptional()
+  discount?: number;
+
   @IsNumber()
   @IsNotEmpty()
   price: number;
