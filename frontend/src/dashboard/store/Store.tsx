@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import AddItemDialogBox from "../../components/Dialog/Add-Item-Dialog";
 import { api } from "../../services/api";
 import Table from "../../components/Table";
+import closeIcon from "../../assets/close.svg";
 
 export default function Store() {
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isItems, setItems] = useState<any[]>();
   const [isStart, setStart] = useState<number>(1);
   const [isSearch, setSearch] = useState<string | "">("");
+  const [isFilters, setFilters] = useState<string>("");
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -21,6 +23,19 @@ export default function Store() {
     fetchItems();
   }, [isStart]);
 
+  const handleFilter = () => {
+    setFilters("");
+    const fetchItems = async () => {
+      try {
+        const res = await api.get(`/items?start=${isStart - 1}&size=9`);
+        setItems(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchItems();
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -28,6 +43,7 @@ export default function Store() {
         try {
           const res = await api.get(`/items?name=${isSearch}`);
           setItems(res.data);
+          setFilters(`Search: ${isSearch}`);
           setSearch("");
         } catch (error) {
           console.log(error);
@@ -51,8 +67,19 @@ export default function Store() {
       <div className="bg-[#f5f5f5] min-h-[calc(100vh-100px)] px-10 pb-4 mt-1">
         <div>
           <div className="w-full flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Item List</h1>
+            <h1 className="text-2xl font-bold">Items</h1>
             <div className="flex gap-4">
+              {isFilters && (
+                <div className="bg-white px-4 py-1.5 rounded-lg flex items-center gap-2">
+                  {isFilters}{" "}
+                  <img
+                    src={closeIcon}
+                    alt="x"
+                    className="w-5 cursor-pointer"
+                    onClick={handleFilter}
+                  />
+                </div>
+              )}
               <div>
                 <input
                   className="w-64 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
