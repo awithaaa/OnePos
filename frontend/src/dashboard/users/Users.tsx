@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import AddItemDialogBox from "../../components/Dialog/Add-Item-Dialog";
 import { api } from "../../services/api";
 import closeIcon from "../../assets/close.svg";
 import UsersTable from "../../components/Table/UsersTable";
+import AddUserDialogBox from "../../components/Dialog/Add-User-Dialog";
 
 export default function Users() {
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -21,7 +21,7 @@ export default function Users() {
       let start = 0;
       if (res.data.count <= 10) setPagintaion(false);
       if (res.data.count < isStart + 9) {
-        end = res.data.count + 1;
+        end = res.data.count;
       } else {
         end = isStart + 9;
       }
@@ -30,7 +30,7 @@ export default function Users() {
       } else {
         start = isStart + 1;
       }
-      setCount(`Showing ${start} to ${end} of ${res.data.count + 1} results`);
+      setCount(`Showing ${start} to ${end} of ${res.data.count} results`);
     } catch (error) {
       console.log(error);
     }
@@ -141,10 +141,10 @@ export default function Users() {
       </div>
 
       <div>
-        <AddItemDialogBox
+        <AddUserDialogBox
           isOpen={isDialogOpen}
           onClose={() => setDialogOpen(false)}
-        ></AddItemDialogBox>
+        ></AddUserDialogBox>
       </div>
     </>
   );
