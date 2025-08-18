@@ -15,4 +15,8 @@ export class UserRegisterDto {
 
   @IsNotEmpty()
   password: string;
+
+  @IsString()
+  @IsNotEmpty()
+  role: string;
 }

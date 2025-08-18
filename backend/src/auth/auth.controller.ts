@@ -14,19 +14,18 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UserRegisterDto } from './dto/register.dto';
 import { UserLoginDto } from './dto/login.dto';
 import { Public } from './decorator/public.decorator';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorator/roles.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async register(@Body() body: UserRegisterDto) {
-    return this.authService.register(
-      body.firstName,
-      body.lastName,
-      body.email,
-      body.password,
-    );
+    return this.authService.register(body);
   }
 
   @Get('me')

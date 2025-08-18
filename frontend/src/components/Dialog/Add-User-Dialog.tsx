@@ -27,7 +27,7 @@ export default function AddUserDialogBox({ isOpen, onClose }: DialogProps) {
     setLoading(true);
 
     try {
-      const res = await api.post("/users", {
+      const res = await api.post("/auth/register", {
         email,
         firstName,
         lastName,
