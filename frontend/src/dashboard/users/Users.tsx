@@ -12,8 +12,9 @@ export default function Users() {
   const [isFilters, setFilters] = useState<string>("");
   const [isCount, setCount] = useState<string>("");
   const [isPagination, setPagintaion] = useState<boolean>(true);
+  const [isSearchType, setSearchType] = useState<string>("id");
 
-  const fetchItems = async () => {
+  const fetctUsers = async () => {
     try {
       const res = await api.get(`/users?start=${isStart - 1}&size=9`);
       setUsers(res.data.users);
@@ -37,21 +38,31 @@ export default function Users() {
   };
 
   useEffect(() => {
-    fetchItems();
+    fetctUsers();
   }, [isStart]);
 
   const handleFilter = () => {
     setFilters("");
-    fetchItems();
+    fetctUsers();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       event.preventDefault();
       const fetchItems = async () => {
+        let query = "";
+        if (isSearchType == "id") {
+          query = `/users?id=${isSearch}`;
+        } else {
+          query = `/users?name=${isSearch}`;
+        }
         try {
-          const res = await api.get(`/items?name=${isSearch}`);
-          setUsers(res.data.item);
+          const res = await api.get(query);
+          if (isSearchType == "id") {
+            setUsers([res.data.user]);
+          } else {
+            setUsers(res.data.user);
+          }
           setFilters(`Search: ${isSearch}`);
           setCount(
             `Showing ${isStart} to ${res.data.count} of ${res.data.count} results`
@@ -81,7 +92,7 @@ export default function Users() {
             <h1 className="text-2xl font-bold">Users</h1>
             <div className="flex gap-4">
               {isFilters && (
-                <div className="bg-white px-4 py-1.5 rounded-lg flex items-center gap-2">
+                <div className="bg-white w-auto px-4 py-1.5 rounded-lg flex items-center gap-2">
                   {isFilters}{" "}
                   <img
                     src={closeIcon}
@@ -92,14 +103,26 @@ export default function Users() {
                 </div>
               )}
               <div>
-                <input
-                  className="w-64 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                  type="text"
-                  placeholder="Search Users"
-                  value={isSearch}
-                  onChange={(e) => setSearch(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                />
+                <div className="flex rounded-lg outline-1 outline-gray-300">
+                  <input
+                    className="w-64 text-base px-2 py-1.5 rounded-l-lg placeholder:text-gray-400 border-r-2 border-gray-300 focus:outline-none"
+                    type="text"
+                    placeholder="Search Users"
+                    value={isSearch}
+                    onChange={(e) => setSearch(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                  />
+                  <div className="w-24 bg-white py-1.5 px-2 rounded-r-lg">
+                    <select
+                      className="w-full text-base bg-white focus:outline-none"
+                      value={isSearchType}
+                      onChange={(e) => setSearchType(e.target.value)}
+                    >
+                      <option value="id">ID</option>
+                      <option value="name">Name</option>
+                    </select>
+                  </div>
+                </div>
               </div>
               <div
                 className="flex items-center justify-center px-6 py-1.5 rounded-lg p-4 text-center font-medium cursor-pointer bg-black text-white hover:bg-white hover:text-black hover:outline-2 transition"
