@@ -80,7 +80,6 @@ export class AuthService {
     });
   }
 
-  // Helper to parse expirations like "7d", "900s" into ms
   parseExpiry(exp: string | undefined) {
     if (!exp) return 7 * 24 * 60 * 60 * 1000;
     if (exp.endsWith('d')) return parseInt(exp) * 24 * 60 * 60 * 1000;
@@ -102,7 +101,7 @@ export class AuthService {
 
     return {
       access_token: tokens.accessToken,
-      refresh_token: tokens.refreshToken, // you may choose to only send via cookie
+      refresh_token: tokens.refreshToken,
     };
   }
 

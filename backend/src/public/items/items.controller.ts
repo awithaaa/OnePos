@@ -20,14 +20,14 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 export class ItemsController {
   constructor(private itemsService: ItemsService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
+  @UseGuards(JwtAuthGuard)
   async addItem(@Body() data: AddItemDto) {
     return this.itemsService.addItem(data);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getItems(
     @Query('start') start?: string,
     @Query('size') size?: string,
@@ -46,15 +46,15 @@ export class ItemsController {
     return this.itemsService.getItems();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   async updateItemById(@Param('id') id: number, @Body() data: UpdateItemDto) {
     return this.itemsService.updateItemById(Number(id), data);
   }
 
+  @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  @Delete(':id')
   async deleteItemById(@Param('id') id: number) {
     return this.itemsService.deleteItemById(Number(id));
   }
