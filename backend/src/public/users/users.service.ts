@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -20,5 +21,69 @@ export class UsersService {
     return this.prisma.user.create({
       data: { firstName, lastName, email, password: hashedPassword },
     });
+  }
+
+  async getUsers(start?: number, size?: number) {
+    if (start !== undefined && size !== undefined) {
+      const count = await this.prisma.user.count();
+      const users = await this.prisma.user.findMany({
+        skip: start,
+        take: size,
+      });
+      return { count, users };
+    }
+    const count = await this.prisma.user.count();
+    const users = await this.prisma.user.findMany({});
+    return { count, users };
+  }
+
+  async getUsersById(id: number) {
+    const user = await this.prisma.user.findUnique({ where: { id: id } });
+    if (!user) throw new NotFoundException('User not found!');
+    return user;
+  }
+
+  async getUsersByName(name: string) {
+    const user = await this.prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            firstName: {
+              contains: name,
+              mode: 'insensitive',
+            },
+          },
+          {
+            lastName: {
+              contains: name,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      },
+    });
+
+    if (!user) throw new NotFoundException('Users not found!');
+    const count = user.length;
+    return { user, count };
+  }
+
+  async updateUserById(id: number, data: UpdateUserDto) {
+    const user = await this.prisma.user.findUnique({ where: { id: id } });
+    if (!user) throw new NotFoundException('User not found!');
+
+    const updateUser = await this.prisma.user.update({
+      where: { id: id },
+      data: data,
+    });
+    return { message: 'User updated succesfully!', item: updateUser };
+  }
+
+  async deleteUserById(id: number) {
+    const user = await this.prisma.user.findUnique({ where: { id: id } });
+    if (!user) throw new NotFoundException('User not found!');
+
+    await this.prisma.user.delete({ where: { id: id } });
+    return { message: 'User deleted succesfully!' };
   }
 }

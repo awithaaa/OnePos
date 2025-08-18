@@ -47,7 +47,8 @@ export class ItemsController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async updateItemById(@Param('id') id: number, @Body() data: UpdateItemDto) {
     return this.itemsService.updateItemById(Number(id), data);
   }
