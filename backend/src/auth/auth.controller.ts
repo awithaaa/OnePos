@@ -13,6 +13,7 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UserRegisterDto } from './dto/register.dto';
 import { UserLoginDto } from './dto/login.dto';
+import { Public } from './decorator/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -35,6 +36,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Public()
   async login(@Body() body: UserLoginDto, @Res({ passthrough: true }) res) {
     const tokens = await this.authService.login(body.email, body.password);
 
