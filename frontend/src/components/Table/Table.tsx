@@ -1,4 +1,4 @@
-import InfoIcon from "../assets/info.svg";
+import InfoIcon from "../../assets/info.svg";
 
 interface Props {
   header?: string[];

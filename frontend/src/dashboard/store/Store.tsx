@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AddItemDialogBox from "../../components/Dialog/Add-Item-Dialog";
 import { api } from "../../services/api";
-import Table from "../../components/Table";
+import Table from "../../components/Table/Table";
 import closeIcon from "../../assets/close.svg";
 
 export default function Store() {
@@ -11,6 +11,7 @@ export default function Store() {
   const [isSearch, setSearch] = useState<string | "">("");
   const [isFilters, setFilters] = useState<string>("");
   const [isCount, setCount] = useState<string>("");
+  const [isPagination, setPagintaion] = useState<boolean>(true);
 
   const fetchItems = async () => {
     try {
@@ -18,6 +19,7 @@ export default function Store() {
       setItems(res.data.items);
       let end = 0;
       let start = 0;
+      if (res.data.count <= 10) setPagintaion(false);
       if (res.data.count < isStart + 9) {
         end = res.data.count + 1;
       } else {
@@ -115,22 +117,24 @@ export default function Store() {
               <div>
                 <p className="font-medium">{isCount}</p>
               </div>
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  className="px-6 py-2 bg-white text-black font-medium rounded-xl hover:bg-black hover:text-white outline-2  transition cursor-pointer"
-                  onClick={handlePrevious}
-                >
-                  Previous
-                </button>
-                <button
-                  type="button"
-                  className="px-6 py-2 bg-black text-white font-medium rounded-xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
-                  onClick={handleNext}
-                >
-                  Next
-                </button>
-              </div>
+              {isPagination && (
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    className="px-6 py-2 bg-white text-black font-medium rounded-xl hover:bg-black hover:text-white outline-2  transition cursor-pointer"
+                    onClick={handlePrevious}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    className="px-6 py-2 bg-black text-white font-medium rounded-xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
+                    onClick={handleNext}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
