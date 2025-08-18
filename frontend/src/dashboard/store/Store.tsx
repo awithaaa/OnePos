@@ -12,6 +12,7 @@ export default function Store() {
   const [isFilters, setFilters] = useState<string>("");
   const [isCount, setCount] = useState<string>("");
   const [isPagination, setPagintaion] = useState<boolean>(true);
+  const [isSearchType, setSearchType] = useState<string>("id");
 
   const fetchItems = async () => {
     try {
@@ -49,9 +50,20 @@ export default function Store() {
     if (event.key === "Enter") {
       event.preventDefault();
       const fetchItems = async () => {
+        let query = "";
+        if (isSearchType == "id") {
+          query = `/items?id=${isSearch}`;
+        } else {
+          query = `/items?name=${isSearch}`;
+        }
         try {
-          const res = await api.get(`/items?name=${isSearch}`);
-          setItems(res.data.item);
+          const res = await api.get(query);
+          console.log(res.data);
+          if (isSearchType == "id") {
+            setItems([res.data.item]);
+          } else {
+            setItems(res.data.item);
+          }
           setFilters(`Search: ${isSearch}`);
           setCount(
             `Showing ${isStart} to ${res.data.count} of ${res.data.count} results`
@@ -91,15 +103,25 @@ export default function Store() {
                   />
                 </div>
               )}
-              <div>
+              <div className="flex rounded-lg outline-1 outline-gray-300">
                 <input
-                  className="w-64 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+                  className="w-64 text-base px-2 py-1.5 rounded-l-lg placeholder:text-gray-400 border-r-2 border-gray-300 focus:outline-none"
                   type="text"
-                  placeholder="Search Items"
+                  placeholder="Search Users"
                   value={isSearch}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
                 />
+                <div className="w-24 bg-white py-1.5 px-2 rounded-r-lg">
+                  <select
+                    className="w-full text-base bg-white focus:outline-none"
+                    value={isSearchType}
+                    onChange={(e) => setSearchType(e.target.value)}
+                  >
+                    <option value="id">ID</option>
+                    <option value="name">Name</option>
+                  </select>
+                </div>
               </div>
               <div
                 className="flex items-center justify-center px-6 py-1.5 rounded-lg p-4 text-center font-medium cursor-pointer bg-black text-white hover:bg-white hover:text-black hover:outline-2 transition"

@@ -38,7 +38,8 @@ export class ItemsService {
   async getItemsById(id: number) {
     const item = await this.prisma.item.findUnique({ where: { id: id } });
     if (!item) throw new NotFoundException('Item not found!');
-    return item;
+    const count = 1;
+    return { item, count };
   }
 
   async getItemsByName(name: string) {

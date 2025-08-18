@@ -49,7 +49,7 @@ export default function Users() {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      const fetchItems = async () => {
+      const fetchUsers = async () => {
         let query = "";
         if (isSearchType == "id") {
           query = `/users?id=${isSearch}`;
@@ -72,7 +72,7 @@ export default function Users() {
           console.log(error);
         }
       };
-      fetchItems();
+      fetchUsers();
     }
   };
 
