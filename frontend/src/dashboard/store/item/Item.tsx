@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../../../services/api";
 import arrow_left from "../../../assets/arrow_left.svg";
-import ErrorDialog from "../../../components/ErrorDialog";
+import EditItem from "../../../components/Edit-Item";
+import ItemDetailBox from "../../../components/Item-detail";
+import EditIcon from "../../../assets/edit.svg";
 
 export default function ItemDetial() {
   const { id } = useParams<{ id: string }>();
   const [isItem, setItem] = useState<any>();
-  const [isChange, setChange] = useState<boolean>();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
+  const [isEdit, setEdit] = useState<boolean>();
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -18,41 +18,6 @@ export default function ItemDetial() {
     };
     fetchItem();
   }, []);
-
-  const handleSubmit = async () => {
-    const res = await api.patch(`/items/${Number(id)}`, {
-      name: isItem.name,
-      brand: isItem.brand,
-      suk: isItem.suk,
-      price: Number(isItem.price),
-      salePrice: Number(isItem.salePrice),
-      discount: Number(isItem.discount),
-    });
-    setMsg(res.data.message);
-    setItem(res.data.item);
-    setIsDialogOpen(true);
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isNumber?: boolean
-  ) => {
-    const { name, value } = e.target;
-
-    if (isNumber) {
-      setItem((prev: any) => ({
-        ...prev,
-        [name]: Number(value),
-      }));
-    } else {
-      setItem((prev: any) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-
-    setChange(true);
-  };
 
   if (isItem) {
     return (
@@ -70,120 +35,32 @@ export default function ItemDetial() {
 
           <div className="flex justify-center mt-10">
             <div className="bg-white p-6 rounded-xl">
-              <div>
-                <div className="flex gap-8">
-                  <div className="flex flex-col gap-2">
-                    <label className="font-semibold text-lg">Item Id</label>
-                    <input
-                      className="w-64 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                      type="text"
-                      value={isItem.id}
-                      readOnly
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <label className="font-semibold text-lg">SUK</label>
-                    <input
-                      className="w-64 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                      type="text"
-                      value={isItem.suk}
-                      name="suk"
-                      onChange={(e) => handleInputChange(e)}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2 mt-4">
-                  <label className="font-semibold text-lg">Name</label>
-                  <input
-                    className="w-full text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                    type="text"
-                    value={isItem.name}
-                    name="name"
-                    onChange={(e) => handleInputChange(e)}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2 mt-4">
-                  <label className="font-semibold text-lg">Brand</label>
-                  <input
-                    className="w-full text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                    type="text"
-                    value={isItem.brand}
-                    name="brand"
-                    onChange={(e) => handleInputChange(e)}
-                  />
-                </div>
-
-                <div className="flex gap-8 mt-4">
-                  <div className="flex flex-col gap-2">
-                    <label className="font-semibold text-lg">Sale</label>
-                    <input
-                      className="w-64 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                      type="text"
-                      value={isItem.price}
-                      name="price"
-                      onChange={(e) => handleInputChange(e, true)}
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <label className="font-semibold text-lg">Sale Price</label>
-                    <input
-                      className="w-64 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                      type="text"
-                      value={isItem.salePrice}
-                      name="salePrice"
-                      onChange={(e) => handleInputChange(e, true)}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex gap-8 mt-4">
-                  <div className="flex flex-col gap-2">
-                    <label className="font-semibold text-lg">Discount</label>
-                    <input
-                      className="w-64 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                      type="text"
-                      value={isItem.discount}
-                      name="discount"
-                      onChange={(e) => handleInputChange(e, true)}
-                    />
-                  </div>
-                </div>
-
-                <div className="w-full h-0.5 my-4 bg-neutral-200"></div>
-
-                <div className="flex justify-center">
-                  {!isChange ? (
-                    <button
-                      type="button"
-                      disabled={true}
-                      className="w-64 py-2.5 font-medium rounded-4xl transition cursor-pointer bg-black text-white hover:bg-white hover:text-black hover:outline-2
-                     disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-300 disabled:hover:text-gray-500"
-                    >
-                      Update
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="w-64 py-2.5 bg-black text-white font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
-                      onClick={handleSubmit}
-                    >
-                      Update
-                    </button>
-                  )}
-                </div>
+              <div className="flex justify-end gap-4">
+                <button
+                  className="bg-white rounded-full w-8 h-8 border-2 border-black p-1 cursor-pointer"
+                  onClick={() => setEdit(true)}
+                >
+                  <img src={EditIcon} alt="edit" className="w-5" />
+                </button>
+                <button className="bg-black rounded-full w-8 h-8 border-2 border-black p-1 cursor-pointer">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="20px"
+                    viewBox="0 -960 960 960"
+                    width="20px"
+                    fill="#FFFFFF"
+                  >
+                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                  </svg>
+                </button>
               </div>
+
+              <div className="w-full h-0.5 mt-4 mb-2 bg-neutral-200"></div>
+              {isEdit && <EditItem item={isItem} />}
+              {!isEdit && <ItemDetailBox item={isItem} />}
             </div>
           </div>
         </div>
-        <ErrorDialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          message={msg}
-        />
       </>
     );
   }
