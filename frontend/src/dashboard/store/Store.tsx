@@ -16,22 +16,16 @@ export default function Store() {
 
   const fetchItems = async () => {
     try {
-      const res = await api.get(`/items?start=${isStart - 1}&size=9`);
+      const res = await api.get(`/items?start=${isStart - 1}&size=10`);
       setItems(res.data.items);
       let end = 0;
-      let start = 0;
       if (res.data.count <= 10) setPagintaion(false);
       if (res.data.count < isStart + 9) {
-        end = res.data.count + 1;
+        end = res.data.count;
       } else {
         end = isStart + 9;
       }
-      if (isStart == 1) {
-        start = isStart;
-      } else {
-        start = isStart + 1;
-      }
-      setCount(`Showing ${start} to ${end} of ${res.data.count + 1} results`);
+      setCount(`Showing ${isStart} to ${end} of ${res.data.count} results`);
     } catch (error) {
       console.log(error);
     }
@@ -78,11 +72,11 @@ export default function Store() {
   };
 
   const handlePrevious = () => {
-    setStart(isStart - 9);
+    setStart(isStart - 10);
   };
 
   const handleNext = () => {
-    setStart(isStart + 9);
+    setStart(isStart + 10);
   };
 
   return (

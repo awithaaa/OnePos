@@ -16,22 +16,16 @@ export default function Users() {
 
   const fetctUsers = async () => {
     try {
-      const res = await api.get(`/users?start=${isStart - 1}&size=9`);
+      const res = await api.get(`/users?start=${isStart - 1}&size=10`);
       setUsers(res.data.users);
       let end = 0;
-      let start = 0;
       if (res.data.count <= 10) setPagintaion(false);
       if (res.data.count < isStart + 9) {
         end = res.data.count;
       } else {
         end = isStart + 9;
       }
-      if (isStart == 1) {
-        start = isStart;
-      } else {
-        start = isStart + 1;
-      }
-      setCount(`Showing ${start} to ${end} of ${res.data.count} results`);
+      setCount(`Showing ${isStart} to ${end} of ${res.data.count} results`);
     } catch (error) {
       console.log(error);
     }
