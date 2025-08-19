@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import InfoIcon from "../../assets/arrow_right.svg";
 
 interface Props {
@@ -56,7 +57,9 @@ export default function Table({ data }: Props) {
                 {item.salePrice}
               </td>
               <td className="border-r-0 border-gray-200 px-4 py-4 flex justify-center">
-                <img src={InfoIcon} alt="info" className="cursor-pointer" />
+                <Link to={`/dashboard/store/item/${item.id}`}>
+                  <img src={InfoIcon} alt="info" className="cursor-pointer" />
+                </Link>
               </td>
             </tr>
           ))}
