@@ -47,8 +47,10 @@ export default function Store() {
         let query = "";
         if (isSearchType == "id") {
           query = `/items?id=${isSearch}`;
-        } else {
+        } else if (isSearchType == "name") {
           query = `/items?name=${isSearch}`;
+        } else if (isSearchType == "brand") {
+          query = `/items?brand=${isSearch}`;
         }
         try {
           const res = await api.get(query);
@@ -58,7 +60,7 @@ export default function Store() {
           } else {
             setItems(res.data.item);
           }
-          setFilters(`Search: ${isSearch}`);
+          setFilters(`Search ${isSearchType}: ${isSearch}`);
           setCount(
             `Showing ${isStart} to ${res.data.count} of ${res.data.count} results`
           );
@@ -114,6 +116,7 @@ export default function Store() {
                   >
                     <option value="id">ID</option>
                     <option value="name">Name</option>
+                    <option value="brand">Brand</option>
                   </select>
                 </div>
               </div>

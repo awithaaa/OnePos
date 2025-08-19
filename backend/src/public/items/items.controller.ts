@@ -33,12 +33,16 @@ export class ItemsController {
     @Query('size') size?: string,
     @Query('id') id?: string,
     @Query('name') name?: string,
+    @Query('brand') brand?: string,
   ) {
     if (id) {
       return this.itemsService.getItemsById(Number(id));
     }
     if (name) {
       return this.itemsService.getItemsByName(name);
+    }
+    if (brand) {
+      return this.itemsService.getItemsByBrand(brand);
     }
     if (start !== undefined && size !== undefined) {
       return this.itemsService.getItems(Number(start), Number(size));

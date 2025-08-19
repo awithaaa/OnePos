@@ -56,6 +56,20 @@ export class ItemsService {
     return { item, count };
   }
 
+  async getItemsByBrand(name: string) {
+    const item = await this.prisma.item.findMany({
+      where: {
+        brand: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      },
+    });
+    if (!item) throw new NotFoundException('Items not found!');
+    const count = item.length;
+    return { item, count };
+  }
+
   async updateItemById(id: number, data: UpdateItemDto) {
     const item = await this.prisma.item.findUnique({ where: { id: id } });
     if (!item) throw new NotFoundException('Items not found!');
