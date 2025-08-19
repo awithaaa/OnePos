@@ -1,5 +1,4 @@
 import { useState } from "react";
-import ErrorDialog from "./ErrorDialog";
 
 interface Props {
   item: any;
@@ -7,9 +6,6 @@ interface Props {
 
 export default function ItemDetailBox({ item }: Props) {
   const [isItem, setItem] = useState<any>(item);
-  const [isEdit, setEdit] = useState<boolean>();
-  const [msg, setMsg] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <>
@@ -97,34 +93,7 @@ export default function ItemDetailBox({ item }: Props) {
         </div>
 
         <div className="w-full h-0.5 my-4 bg-neutral-200"></div>
-
-        {/* <div className="flex justify-center">
-              {!isChange ? (
-                <button
-                  type="button"
-                  disabled={true}
-                  className="w-64 py-2.5 font-medium rounded-4xl transition cursor-pointer bg-black text-white hover:bg-white hover:text-black hover:outline-2
-                     disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-300 disabled:hover:text-gray-500"
-                >
-                  Update
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="w-64 py-2.5 bg-black text-white font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
-                  onClick={handleSubmit}
-                >
-                  Update
-                </button>
-              )}
-            </div> */}
       </div>
-
-      <ErrorDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        message={msg}
-      />
     </>
   );
 }

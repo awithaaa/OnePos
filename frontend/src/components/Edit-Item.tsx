@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { api } from "../services/api";
 import ErrorDialog from "./ErrorDialog";
-import EditIcon from "../assets/edit.svg";
 
 interface Props {
   item: any;

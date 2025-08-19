@@ -27,7 +27,7 @@ export default function ItemDetial() {
   if (isItem) {
     return (
       <>
-        <div className="bg-[#f5f5f5] min-h-[calc(100vh-100px)] px-10 pb-4 mt-1">
+        <div className="bg-[#f5f5f5] min-h-[calc(100vh-100px)] px-10 pb-8 mt-1">
           <div className="w-full flex gap-2 items-center">
             <Link
               to={`/dashboard/store/`}
@@ -42,7 +42,8 @@ export default function ItemDetial() {
             <div className="bg-white p-6 rounded-xl">
               {isEdit && (
                 <div>
-                  <div className="flex justify-end gap-4">
+                  <div className="flex justify-between">
+                    <div className="text-xl font-bold ">Item Edit</div>
                     <button
                       className="bg-black rounded-full w-8 h-8 border-2 border-black p-1 cursor-pointer"
                       onClick={() => setEdit(false)}
