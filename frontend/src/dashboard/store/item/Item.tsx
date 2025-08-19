@@ -17,7 +17,7 @@ export default function ItemDetial() {
       setItem(res.data.item);
     };
     fetchItem();
-  }, []);
+  }, [isItem]);
 
   const deleteItem = async () => {
     const res = await api.delete(`/items/${id}`);

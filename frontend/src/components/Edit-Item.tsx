@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import ErrorDialog from "./ErrorDialog";
 
@@ -11,6 +11,12 @@ export default function EditItem({ item }: Props) {
   const [isChange, setChange] = useState<boolean>();
   const [msg, setMsg] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDiscPrec, setDiscPrec] = useState<string>("");
+
+  useEffect(() => {
+    const discount = (Number(isItem.discount) * 100) / Number(isItem.salePrice);
+    setDiscPrec(discount.toString());
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -45,6 +51,19 @@ export default function EditItem({ item }: Props) {
     setMsg(res.data.message);
     setItem(res.data.item);
     setIsDialogOpen(true);
+  };
+
+  const handleDiscountPrecentage = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      setChange(true);
+      const discount = Number(isItem.salePrice) * (Number(isDiscPrec) / 100);
+      setItem((prev: any) => ({
+        ...prev,
+        ["discount"]: discount,
+      }));
+    }
   };
 
   return (
@@ -128,6 +147,18 @@ export default function EditItem({ item }: Props) {
               value={isItem.discount}
               name="discount"
               onChange={(e) => handleInputChange(e, true)}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold text-lg">
+              Discount Precentage %
+            </label>
+            <input
+              className="w-64 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+              type="text"
+              value={isDiscPrec}
+              onChange={(e) => setDiscPrec(e.target.value)}
+              onKeyDown={handleDiscountPrecentage}
             />
           </div>
         </div>

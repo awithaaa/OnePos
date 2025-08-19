@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
   item: any;
@@ -6,6 +6,8 @@ interface Props {
 
 export default function ItemDetailBox({ item }: Props) {
   const [isItem, setItem] = useState<any>(item);
+
+  useEffect(() => {}, [item]);
 
   return (
     <>
