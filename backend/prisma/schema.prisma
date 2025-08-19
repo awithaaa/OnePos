@@ -41,13 +41,28 @@ model Item {
  
   SaleItem SaleItem[]
   Inventory Inventory[]
+  EmptyInventory EmptyInventory[]
 }
 
 model Inventory {
   id         Int @id @default(autoincrement())
   itemId     Int
   quantity   Int
+  price   Decimal  @db.Decimal(10,2)
+  salePrice   Decimal  @db.Decimal(10,2)
   createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  item       Item    @relation(fields: [itemId], references: [id])
+}
+
+model EmptyInventory {
+  id         Int @id @default(autoincrement())
+  itemId     Int
+  quantity   Int
+  price   Decimal  @db.Decimal(10,2)
+  salePrice   Decimal  @db.Decimal(10,2)
+  createdAt  DateTime       
   updatedAt  DateTime       @updatedAt
 
   item       Item    @relation(fields: [itemId], references: [id])
