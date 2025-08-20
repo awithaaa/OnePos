@@ -1,11 +1,13 @@
+import { Link } from "react-router-dom";
 import InfoIcon from "../../assets/arrow_right.svg";
 
 interface Props {
   header?: string[];
   data: any[];
+  type: "live" | "empty";
 }
 
-export default function InventoryTable({ data }: Props) {
+export default function InventoryTable({ data, type }: Props) {
   const columns = [
     { header: "ID", width: "w-1/10" },
     { header: "Quantity", width: "w-1/6" },
@@ -31,7 +33,7 @@ export default function InventoryTable({ data }: Props) {
         </thead>
         <tbody className="bg-white ">
           {data.map((inv) => (
-            <tr key={inv.id} className="border-b border-gray-200">
+            <tr key={inv.id} className="border-b-0 border-gray-200">
               <td className="border-r-1 border-l-0 border-gray-200 px-4 py-4 text-center">
                 {inv.id}
               </td>
@@ -48,7 +50,9 @@ export default function InventoryTable({ data }: Props) {
                 {inv.salePrice}
               </td>
               <td className="border-r-0 border-gray-200 px-4 py-4 flex justify-center">
-                <img src={InfoIcon} alt="info" className="cursor-pointer" />
+                <Link to={`/dashboard/store/inventory/${inv.id}`}>
+                  <img src={InfoIcon} alt="info" className="cursor-pointer" />
+                </Link>
               </td>
             </tr>
           ))}

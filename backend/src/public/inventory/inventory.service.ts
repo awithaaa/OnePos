@@ -38,6 +38,15 @@ export class InventoryService {
     return inventory;
   }
 
+  async getEmptyInventoryById(id: number) {
+    const inventory = await this.prisma.emptyInventory.findUnique({
+      where: { id: id },
+    });
+    if (!inventory) throw new NotFoundException('Inventory not found!');
+
+    return inventory;
+  }
+
   async updateInventoryById(id: number, data: UpdateInventoryDto) {
     const inventory = await this.prisma.inventory.findUnique({
       where: { id: id },
@@ -72,6 +81,20 @@ export class InventoryService {
     return { message: 'Inventory update successfully', updatedInventory };
   }
 
+  async updateEmptyInventoryById(id: number, data: UpdateInventoryDto) {
+    const emptyInventory = await this.prisma.emptyInventory.findUnique({
+      where: { id: id },
+    });
+    if (!emptyInventory) throw new NotFoundException('Inventory not found!');
+
+    const updatedInventory = await this.prisma.emptyInventory.update({
+      where: { id: id },
+      data: data,
+    });
+
+    return { message: 'Inventory update successfully', updatedInventory };
+  }
+
   async deleteInventoryById(id: number) {
     const inventory = await this.prisma.inventory.findUnique({
       where: { id: id },
@@ -79,6 +102,19 @@ export class InventoryService {
     if (!inventory) throw new NotFoundException('Inventory not found!');
 
     const deletedInventory = await this.prisma.inventory.delete({
+      where: { id: id },
+    });
+
+    return { message: 'Inventory delete successfully' };
+  }
+
+  async deleteEmptyInventoryById(id: number) {
+    const emptyInventory = await this.prisma.emptyInventory.findUnique({
+      where: { id: id },
+    });
+    if (!emptyInventory) throw new NotFoundException('Inventory not found!');
+
+    const deletedInventory = await this.prisma.emptyInventory.delete({
       where: { id: id },
     });
 

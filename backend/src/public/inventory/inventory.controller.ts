@@ -39,6 +39,12 @@ export class InventoryController {
     return this.inventoryService.getInventoryById(Number(id));
   }
 
+  @Get('/empty/:id')
+  @UseGuards(JwtAuthGuard)
+  async getEmptyInventoryById(@Param('id') id: number) {
+    return this.inventoryService.getEmptyInventoryById(Number(id));
+  }
+
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
@@ -49,10 +55,27 @@ export class InventoryController {
     return this.inventoryService.updateInventoryById(Number(id), data);
   }
 
+  @Patch('/empty:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async updateEmptyInventoryById(
+    @Param('id') id: number,
+    @Body() data: UpdateInventoryDto,
+  ) {
+    return this.inventoryService.updateEmptyInventoryById(Number(id), data);
+  }
+
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async deleteInventoryById(@Param('id') id: number) {
     return this.inventoryService.deleteInventoryById(Number(id));
+  }
+
+  @Delete('/empty/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async deleteEmptyInventoryById(@Param('id') id: number) {
+    return this.inventoryService.deleteEmptyInventoryById(Number(id));
   }
 }

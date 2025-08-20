@@ -8,7 +8,7 @@ import EditIcon from "../../../assets/edit.svg";
 import InventoryTable from "../../../components/Table/Inventory-Table";
 import AddInventoryDialogBox from "../../../components/Dialog/Add-Inventory-Dialog";
 
-export default function ItemDetial() {
+export default function ItemDetail() {
   const { id } = useParams<{ id: string }>();
   const [isItem, setItem] = useState<any>();
   const [isEdit, setEdit] = useState<boolean>();
@@ -126,14 +126,16 @@ export default function ItemDetial() {
                     </svg>
                   </button>
                 </div>
-                {isLiveInve && <InventoryTable data={isLiveInve} />}
+                {isLiveInve && <InventoryTable data={isLiveInve} type="live" />}
               </div>
 
               <div>
                 <div className="w-full flex mt-10 mb-4">
                   <h1 className="text-2xl font-bold">Empty Inventory</h1>
                 </div>
-                {isEmptyInve && <InventoryTable data={isEmptyInve} />}
+                {isEmptyInve && (
+                  <InventoryTable data={isEmptyInve} type="empty" />
+                )}
               </div>
             </div>
           </div>
