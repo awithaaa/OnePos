@@ -7,6 +7,10 @@ export class UpdateInventoryDto {
 
   @IsNumber()
   @IsOptional()
+  stock?: number;
+
+  @IsNumber()
+  @IsOptional()
   price?: number;
 
   @IsNumber()

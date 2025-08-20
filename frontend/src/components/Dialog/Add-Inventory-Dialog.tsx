@@ -20,6 +20,7 @@ export default function AddInventoryDialogBox({
   itemId,
 }: DialogProps) {
   const [quantity, setQuantity] = useState<number | "">("");
+  const [stock, setStock] = useState<number | "">("");
   const [price, setPrice] = useState<number | "">("");
   const [salePrice, setSalePrice] = useState<number | "">("");
   const [error, setError] = useState<string | null>(null);
@@ -33,9 +34,11 @@ export default function AddInventoryDialogBox({
       const res = await api.post("/inventory", {
         itemId: itemId,
         quantity: Number(quantity),
+        stock: Number(quantity),
         price: Number(price),
         salePrice: Number(salePrice),
       });
+      setStock("");
       setQuantity("");
       setPrice("");
       setSalePrice("");
@@ -101,6 +104,18 @@ export default function AddInventoryDialogBox({
                         type="text"
                         value={quantity}
                         onChange={(e) => setQuantity(Number(e.target.value))}
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label className="ml-1 mb-1">
+                        Stock <span className="text-red-600">*</span>
+                      </label>
+                      <input
+                        className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+                        type="text"
+                        value={stock}
+                        onChange={(e) => setStock(Number(e.target.value))}
                       />
                     </div>
 
