@@ -13,6 +13,7 @@ export default function ItemDetial() {
   const [isItem, setItem] = useState<any>();
   const [isEdit, setEdit] = useState<boolean>();
   const [isLiveInve, setLiveInve] = useState<any[]>();
+  const [isEmptyInve, setEmptyInve] = useState<any[]>();
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -22,6 +23,7 @@ export default function ItemDetial() {
 
       const resInve = await api.get(`/inventory?itemId=${Number(id)}`);
       setLiveInve(resInve.data.inventory);
+      setEmptyInve(resInve.data.emptyInventory);
     };
     fetchItem();
   }, []);
@@ -131,7 +133,7 @@ export default function ItemDetial() {
                 <div className="w-full flex mt-10 mb-4">
                   <h1 className="text-2xl font-bold">Empty Inventory</h1>
                 </div>
-                {isLiveInve && <InventoryTable data={isLiveInve} />}
+                {isEmptyInve && <InventoryTable data={isEmptyInve} />}
               </div>
             </div>
           </div>

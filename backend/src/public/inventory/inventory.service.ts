@@ -19,8 +19,14 @@ export class InventoryService {
     const inventory = await this.prisma.inventory.findMany({
       where: { itemId: itemId },
     });
+
+    const emptyInventory = await this.prisma.emptyInventory.findMany({
+      where: { itemId: itemId },
+    });
+
+    const countEmpty = emptyInventory.length;
     const count = inventory.length;
-    return { count, inventory };
+    return { count, inventory, countEmpty, emptyInventory };
   }
 
   async getInventoryById(id: number) {
