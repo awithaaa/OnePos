@@ -20,14 +20,11 @@ export default function ItemDetial() {
       const res = await api.get(`/items?id=${Number(id)}`);
       setItem(res.data.item);
 
-      const live = [
-        { id: 1, itemId: 1, quantity: 5, price: 100, salePrice: 100 },
-        { id: 2, itemId: 1, quantity: 5, price: 100, salePrice: 100 },
-      ];
-      setLiveInve(live);
+      const resInve = await api.get(`/inventory?itemId=${Number(id)}`);
+      setLiveInve(resInve.data.inventory);
     };
     fetchItem();
-  }, [isItem]);
+  }, []);
 
   const deleteItem = async () => {
     const res = await api.delete(`/items/${id}`);

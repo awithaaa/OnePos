@@ -30,13 +30,13 @@ export class InventoryController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async getInventoryByItemId(@Query('itemId') itemId: number) {
-    return this.inventoryService.getInventoryByItemId(itemId);
+    return this.inventoryService.getInventoryByItemId(Number(itemId));
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async getInventoryById(@Param('id') id: number) {
-    return this.inventoryService.getInventoryById(id);
+    return this.inventoryService.getInventoryById(Number(id));
   }
 
   @Patch(':id')
