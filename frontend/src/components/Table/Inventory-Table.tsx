@@ -8,7 +8,8 @@ interface Props {
 export default function InventoryTable({ data }: Props) {
   const columns = [
     { header: "ID", width: "w-1/10" },
-    { header: "Quantity", width: "w-1/5" },
+    { header: "Quantity", width: "w-1/6" },
+    { header: "Stock", width: "w-1/8" },
     { header: "Price", width: "w-1/5" },
     { header: "SalePrice", width: "w-/5" },
     { header: "Actions", width: "w-1/6" },
@@ -36,6 +37,9 @@ export default function InventoryTable({ data }: Props) {
               </td>
               <td className="border-r-1 border-gray-200 px-4 py-4">
                 {`${inv.quantity}`}
+              </td>
+              <td className="border-r-1 border-gray-200 px-4 py-4">
+                {`${inv.stock}`}
               </td>
               <td className="border-r-1 border-gray-200 px-4 py-4">
                 {inv.price}
