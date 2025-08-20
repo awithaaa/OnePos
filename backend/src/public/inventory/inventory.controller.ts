@@ -46,13 +46,13 @@ export class InventoryController {
     @Param('id') id: number,
     @Body() data: UpdateInventoryDto,
   ) {
-    return this.inventoryService.updateInventoryById(id, data);
+    return this.inventoryService.updateInventoryById(Number(id), data);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async deleteInventoryById(@Param('id') id: number) {
-    return this.inventoryService.deleteInventoryById(id);
+    return this.inventoryService.deleteInventoryById(Number(id));
   }
 }

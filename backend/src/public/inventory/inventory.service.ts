@@ -43,6 +43,26 @@ export class InventoryService {
       data: data,
     });
 
+    if (data.quantity === 0) {
+      const empty = await this.prisma.emptyInventory.create({
+        data: {
+          itemId: updatedInventory.itemId,
+          quantity: 0,
+          stock: updatedInventory.stock,
+          price: updatedInventory.price,
+          salePrice: updatedInventory.salePrice,
+          createdAt: updatedInventory.createdAt,
+        },
+      });
+      await this.prisma.inventory.delete({
+        where: { id: updatedInventory.id },
+      });
+      return {
+        message: 'Inventory update successfully & Quantity is Zero',
+        updatedInventory,
+      };
+    }
+
     return { message: 'Inventory update successfully', updatedInventory };
   }
 
