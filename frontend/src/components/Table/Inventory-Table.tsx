@@ -50,7 +50,7 @@ export default function InventoryTable({ data, type }: Props) {
                 {inv.salePrice}
               </td>
               <td className="border-r-0 border-gray-200 px-4 py-4 flex justify-center">
-                <Link to={`/dashboard/store/inventory/${inv.id}`}>
+                <Link to={`/dashboard/store/inventory/${inv.id}?type=${type}`}>
                   <img src={InfoIcon} alt="info" className="cursor-pointer" />
                 </Link>
               </td>

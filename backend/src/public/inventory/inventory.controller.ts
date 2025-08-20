@@ -55,7 +55,7 @@ export class InventoryController {
     return this.inventoryService.updateInventoryById(Number(id), data);
   }
 
-  @Patch('/empty:id')
+  @Patch('/empty/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async updateEmptyInventoryById(

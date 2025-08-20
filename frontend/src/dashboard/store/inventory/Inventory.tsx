@@ -5,29 +5,43 @@ import arrow_left from "../../../assets/arrow_left.svg";
 import EditItem from "../../../components/Edit-Item";
 import ItemDetailBox from "../../../components/Item-detail";
 import EditIcon from "../../../assets/edit.svg";
+import InventoryDetailBox from "../../../components/Inventory-Detail";
+import EditInventory from "../../../components/Edit-Inventory";
 
 export default function InventoryDetail() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get("type");
-  const [isItem, setItem] = useState<any>();
+  const [isInventory, setInventory] = useState<any>();
   const [isEdit, setEdit] = useState<boolean>();
 
   useEffect(() => {
     const fetchItem = async () => {
-      const res = await api.get(`/items?id=${Number(id)}`);
-      setItem(res.data.item);
+      let query = ``;
+      if (type == "live") {
+        query = `/inventory/${Number(id)}`;
+      } else {
+        query = `/inventory/empty/${Number(id)}`;
+      }
+      const res = await api.get(query);
+      setInventory(res.data);
     };
     fetchItem();
   }, []);
 
   const deleteItem = async () => {
-    const res = await api.delete(`/items/${id}`);
+    let query = ``;
+    if (type == "live") {
+      query = `/inventory/${Number(id)}`;
+    } else {
+      query = `/inventory/empty/${Number(id)}`;
+    }
+    const res = await api.delete(query);
     redirect("/dashboard/store");
   };
 
-  if (isItem) {
+  if (isInventory) {
     return (
       <>
         <div className="bg-[#f5f5f5] min-h-[calc(100vh-100px)] px-10 pb-8 mt-1">
@@ -38,7 +52,7 @@ export default function InventoryDetail() {
             >
               <img src={arrow_left} alt="info" className="cursor-pointer w-9" />
             </Link>
-            <h1 className="text-2xl font-bold">Item Details</h1>
+            <h1 className="text-2xl font-bold">Inventory Details</h1>
           </div>
 
           <div className="flex justify-center mt-10">
@@ -46,7 +60,7 @@ export default function InventoryDetail() {
               {isEdit && (
                 <div>
                   <div className="flex justify-between">
-                    <div className="text-xl font-bold ">Item Edit</div>
+                    <div className="text-xl font-bold ">Inventory Edit</div>
                     <button
                       className="bg-black rounded-full w-8 h-8 border-2 border-black p-1 cursor-pointer"
                       onClick={() => setEdit(false)}
@@ -64,7 +78,7 @@ export default function InventoryDetail() {
                   </div>
 
                   <div className="w-full h-0.5 mt-4 mb-2 bg-neutral-200"></div>
-                  <EditItem item={isItem} />
+                  <EditInventory inventory={isInventory} type={type} />
                 </div>
               )}
 
@@ -94,7 +108,7 @@ export default function InventoryDetail() {
                   </div>
 
                   <div className="w-full h-0.5 mt-4 mb-2 bg-neutral-200"></div>
-                  <ItemDetailBox item={isItem} />
+                  <InventoryDetailBox inventory={isInventory} />
                 </div>
               )}
             </div>
