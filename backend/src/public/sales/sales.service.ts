@@ -18,10 +18,18 @@ export class SalesService {
     return { message: 'Sales add succesfully!' };
   }
 
-  async getSales() {
+  async getSales(start?: number, size?: number) {
+    if (start !== undefined && size !== undefined) {
+      const count = await this.prisma.sale.count();
+      const sales = await this.prisma.sale.findMany({
+        skip: start,
+        take: size,
+      });
+      return { count, sales };
+    }
+    const count = await this.prisma.sale.count();
     const sales = await this.prisma.sale.findMany({});
-
-    return sales;
+    return { count, sales };
   }
 
   async getSaleWithItems(id: number) {

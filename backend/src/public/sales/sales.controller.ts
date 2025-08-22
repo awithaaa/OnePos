@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { SalesService } from './sales.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateSalesDto } from './dto/create-sales.dto';
@@ -15,7 +23,10 @@ export class SalesController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getSales() {
+  async getSales(@Query('start') start?: string, @Query('size') size?: string) {
+    if (start !== undefined && size !== undefined) {
+      return this.salesService.getSales(Number(start), Number(size));
+    }
     return this.salesService.getSales();
   }
 
