@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, redirect, useLocation, useParams } from "react-router-dom";
 import { api } from "../../../services/api";
 import arrow_left from "../../../assets/arrow_left.svg";
-import EditItem from "../../../components/Edit-Item";
-import ItemDetailBox from "../../../components/Item-detail";
 import EditIcon from "../../../assets/edit.svg";
 import InventoryDetailBox from "../../../components/Inventory-Detail";
 import EditInventory from "../../../components/Edit-Inventory";
@@ -47,7 +45,7 @@ export default function InventoryDetail() {
         <div className="bg-[#f5f5f5] min-h-[calc(100vh-100px)] px-10 pb-8 mt-1">
           <div className="w-full flex gap-2 items-center">
             <Link
-              to={`/dashboard/store/`}
+              to={`/dashboard/store/item/${isInventory.itemId}`}
               className="flex items-center w-9 rounded-full p-2 bg-gray-200 hover:bg-sky-200 transition"
             >
               <img src={arrow_left} alt="info" className="cursor-pointer w-9" />

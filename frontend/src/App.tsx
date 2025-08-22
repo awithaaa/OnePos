@@ -9,6 +9,7 @@ import NotFound from "./Not-found";
 import Store from "./dashboard/store/Store";
 import ItemDetail from "./dashboard/store/item/Item";
 import InventoryDetail from "./dashboard/store/inventory/Inventory";
+import CreateBill from "./dashboard/bill/create/Create";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             }
           >
             <Route index element={<Dashboard />} />
+            <Route path="bill/create" element={<CreateBill />} />
             <Route path="store" element={<Store />} />
             <Route path="store/item/:id" element={<ItemDetail />} />
             <Route path="store/inventory/:id" element={<InventoryDetail />} />
