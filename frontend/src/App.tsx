@@ -10,6 +10,7 @@ import Store from "./dashboard/store/Store";
 import ItemDetail from "./dashboard/store/item/Item";
 import InventoryDetail from "./dashboard/store/inventory/Inventory";
 import CreateBill from "./dashboard/bill/create/Create";
+import Bill from "./dashboard/bill/Bill";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             }
           >
             <Route index element={<Dashboard />} />
+            <Route path="bill" element={<Bill />} />
             <Route path="bill/create" element={<CreateBill />} />
             <Route path="store" element={<Store />} />
             <Route path="store/item/:id" element={<ItemDetail />} />
