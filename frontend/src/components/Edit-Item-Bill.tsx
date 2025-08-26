@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { api } from "../services/api";
 
 interface Items {
   id: number;
@@ -14,12 +13,14 @@ interface Props {
   item: Items;
   handleUpdated: (item: Items) => void;
   handleClose: () => void;
+  handleRemove: () => void;
 }
 
 export default function EditItemBill({
   item,
   handleUpdated,
   handleClose,
+  handleRemove,
 }: Props) {
   const [isId, setId] = useState<string>(item.id.toString());
   const [isSuk, setSuk] = useState<string>("");
@@ -31,6 +32,10 @@ export default function EditItemBill({
   const [isDiscount, setDiscount] = useState<any>(
     item.discount?.toString() || "0"
   );
+
+  const handleRemoveBtn = () => {
+    handleRemove();
+  };
 
   const handleUpdateItem = () => {
     handleUpdated({
@@ -120,8 +125,11 @@ export default function EditItemBill({
           </div>
 
           <div className="flex justify-between gap-4 mt-2">
-            <button className="w-full py-2.5 text-black bg-white outline-2  font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer">
-              Delete
+            <button
+              className="w-full py-2.5 text-black bg-white outline-2  font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
+              onClick={handleRemoveBtn}
+            >
+              Remove
             </button>
             <button
               className="w-full py-2.5 bg-black text-white font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"

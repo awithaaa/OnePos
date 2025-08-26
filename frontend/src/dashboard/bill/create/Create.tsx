@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import arrow_left from "../../../assets/arrow_left.svg";
 import InfoIcon from "../../../assets/arrow_right.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AddItemBill from "../../../components/Add-Item-Bill";
 import EditItemBill from "../../../components/Edit-Item-Bill";
 
@@ -37,7 +37,7 @@ export default function CreateBill() {
     0
   );
   const discount = items.reduce(
-    (sum, item) => (item.discount || 0) * item.qty,
+    (sum, item) => sum + (item.discount || 0) * item.qty,
     0
   );
   const tax = subtotal * 0.08;
@@ -47,7 +47,7 @@ export default function CreateBill() {
     setItems([...items, item]);
   };
 
-  const handleEdit = (id: number, index: number) => {
+  const handleEdit = (index: number) => {
     setEdit(true);
     setEditIndex(index);
     setEditItem(items[index]);
@@ -61,6 +61,17 @@ export default function CreateBill() {
   };
 
   const handleEditClose = () => {
+    setEdit(false);
+    setEditIndex(0);
+    setEditItem(null);
+  };
+
+  const handleRemove = () => {
+    setItems((prev) => {
+      const updated = [...prev];
+      updated.splice(isEditIndex, 1);
+      return updated;
+    });
     setEdit(false);
     setEditIndex(0);
     setEditItem(null);
@@ -140,7 +151,7 @@ export default function CreateBill() {
                         {item.discount || "-"}
                       </td>
                       <td className="border-r-0 border-gray-200 px-4 py-4 flex justify-center">
-                        <div onClick={() => handleEdit(item.id, index)}>
+                        <div onClick={() => handleEdit(index)}>
                           <img
                             src={InfoIcon}
                             alt="info"
@@ -184,6 +195,7 @@ export default function CreateBill() {
                 handleUpdated={handleUpdate}
                 item={isEditItem}
                 handleClose={handleEditClose}
+                handleRemove={handleRemove}
               />
             )}
             {!isEdit && <AddItemBill handleItem={handleItem} />}
