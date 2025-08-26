@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import arrow_left from "../../../assets/arrow_left.svg";
 import InfoIcon from "../../../assets/arrow_right.svg";
 import { useEffect, useState } from "react";
+import AddItemBill from "../../../components/Add-Item-Bill";
 
 interface Items {
   id: number;
@@ -14,10 +15,7 @@ interface Items {
 
 export default function CreateBill() {
   const [customer, setCustomer] = useState<string>("");
-
-  const [items, setItems] = useState<Items[]>([
-    { id: 1, name: "No", qty: 1, unitPrice: 100, total: 100 },
-  ]);
+  const [items, setItems] = useState<Items[]>([]);
   const columns = [
     { header: "ID", width: "w-1/20" },
     { header: "Name", width: "w-1/3" },
@@ -27,6 +25,17 @@ export default function CreateBill() {
     { header: "Discount", width: "w-1/8" },
     { header: "", width: "w-1/12" },
   ];
+
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.qty * item.unitPrice,
+    0
+  );
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
+
+  const handleItem = (item: Items) => {
+    setItems([...items, item]);
+  };
 
   return (
     <>
@@ -106,70 +115,30 @@ export default function CreateBill() {
                   ))}
                 </tbody>
               </table>
+              <div className="w-full p-4 bg-white rounded-b-xl">
+                {/* Totals */}
+                <div className="flex justify-end">
+                  <div className="w-full md:w-1/3 space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Subtotal</span>
+                      <span>${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Tax (8%)</span>
+                      <span>${tax.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-lg border-t pt-2">
+                      <span>Total</span>
+                      <span>${total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="w-[500px]  bg-white rounded-lg p-4 shadow-xl">
-            <p className="font-bold text-xl">Add Item</p>
-            <div className="my-2 w-full h-0.5 bg-neutral-200"></div>
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col">
-                <label className="ml-1 mb-1">ID/ SUK</label>
-                <input
-                  className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                  type="text"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="ml-1 mb-1">Name</label>
-                <input
-                  className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                  type="text"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="ml-1 mb-1">Brand</label>
-                <input
-                  className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                  type="text"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="ml-1 mb-1">Quantity</label>
-                <input
-                  className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                  type="text"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="ml-1 mb-1">Unit Price</label>
-                <input
-                  className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                  type="text"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="ml-1 mb-1">Discount</label>
-                <input
-                  className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                  type="text"
-                />
-              </div>
-
-              <div className="flex justify-between gap-4 mt-2">
-                <button className="w-full py-2.5 text-black bg-white outline-2  font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer">
-                  Clear
-                </button>
-                <button className="w-full py-2.5 bg-black text-white font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer">
-                  Add
-                </button>
-              </div>
-            </div>
+          <div>
+            <AddItemBill handleItem={handleItem} />
           </div>
         </div>
 
