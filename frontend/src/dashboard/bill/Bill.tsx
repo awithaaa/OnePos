@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import closeIcon from "../../assets/close.svg";
 import BillTable from "../../components/Table/Bills-Table";
+import { Link } from "react-router-dom";
 
 export default function Bill() {
   const [isSales, setSales] = useState<any[]>();
@@ -44,14 +45,14 @@ export default function Bill() {
       const fetchItems = async () => {
         let query = "";
         if (isSearchType == "id") {
-          query = `/items?id=${isSearch}`;
+          query = `/sales?id=${isSearch}`;
         } else if (isSearchType == "customer") {
-          query = `/items?customer=${isSearch}`;
+          query = `/sales?customer=${isSearch}`;
         }
         try {
           const res = await api.get(query);
           if (isSearchType == "id") {
-            setSales([res.data.sales]);
+            setSales(res.data.sales);
           } else {
             setSales(res.data.sales);
           }
@@ -98,7 +99,7 @@ export default function Bill() {
                 <input
                   className="w-64 text-base px-2 py-1.5 rounded-l-lg placeholder:text-gray-400 border-r-2 border-gray-300 focus:outline-none"
                   type="text"
-                  placeholder="Search Users"
+                  placeholder="Search Bill"
                   value={isSearch}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -114,9 +115,12 @@ export default function Bill() {
                   </select>
                 </div>
               </div>
-              <div className="flex items-center justify-center px-6 py-1.5 rounded-lg p-4 text-center font-medium cursor-pointer bg-black text-white hover:bg-white hover:text-black hover:outline-2 transition">
+              <Link
+                className="flex items-center justify-center px-6 py-1.5 rounded-lg p-4 text-center font-medium cursor-pointer bg-black text-white hover:bg-white hover:text-black hover:outline-2 transition"
+                to={"/dashboard/bill/create"}
+              >
                 Add Bill
-              </div>
+              </Link>
             </div>
           </div>
 
