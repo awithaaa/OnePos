@@ -3,6 +3,7 @@ import arrow_left from "../../../assets/arrow_left.svg";
 import InfoIcon from "../../../assets/arrow_right.svg";
 import { useEffect, useState } from "react";
 import AddItemBill from "../../../components/Add-Item-Bill";
+import EditItemBill from "../../../components/Edit-Item-Bill";
 
 interface Items {
   id: number;
@@ -11,11 +12,16 @@ interface Items {
   unitPrice: number;
   total: number;
   discount?: number;
+  index?: number;
 }
 
 export default function CreateBill() {
   const [customer, setCustomer] = useState<string>("");
   const [items, setItems] = useState<Items[]>([]);
+  const [isEdit, setEdit] = useState<boolean>();
+  const [isEditIndex, setEditIndex] = useState<number>(0);
+  const [isEditItem, setEditItem] = useState<Items | null>();
+
   const columns = [
     { header: "ID", width: "w-1/20" },
     { header: "Name", width: "w-1/3" },
@@ -30,11 +36,42 @@ export default function CreateBill() {
     (sum, item) => sum + item.qty * item.unitPrice,
     0
   );
+  const discount = items.reduce(
+    (sum, item) => (item.discount || 0) * item.qty,
+    0
+  );
   const tax = subtotal * 0.08;
-  const total = subtotal + tax;
+  const total = subtotal + tax - discount;
 
   const handleItem = (item: Items) => {
     setItems([...items, item]);
+  };
+
+  const handleEdit = (id: number, index: number) => {
+    setEdit(true);
+    setEditIndex(index);
+    setEditItem(items[index]);
+  };
+
+  const handleUpdate = (item: Items) => {
+    handleReplaceItem(isEditIndex, item);
+    setEdit(false);
+    setEditIndex(0);
+    setEditItem(null);
+  };
+
+  const handleEditClose = () => {
+    setEdit(false);
+    setEditIndex(0);
+    setEditItem(null);
+  };
+
+  const handleReplaceItem = (index: number, newItem: Items) => {
+    setItems((prev) => {
+      const updated = [...prev];
+      updated[index] = newItem;
+      return updated;
+    });
   };
 
   return (
@@ -103,13 +140,13 @@ export default function CreateBill() {
                         {item.discount || "-"}
                       </td>
                       <td className="border-r-0 border-gray-200 px-4 py-4 flex justify-center">
-                        <Link to={`/dashboard/`}>
+                        <div onClick={() => handleEdit(item.id, index)}>
                           <img
                             src={InfoIcon}
                             alt="info"
                             className="cursor-pointer"
                           />
-                        </Link>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -122,6 +159,10 @@ export default function CreateBill() {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Subtotal</span>
                       <span>${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Discount</span>
+                      <span>${discount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Tax (8%)</span>
@@ -138,7 +179,14 @@ export default function CreateBill() {
           </div>
 
           <div>
-            <AddItemBill handleItem={handleItem} />
+            {isEdit && isEditItem && (
+              <EditItemBill
+                handleUpdated={handleUpdate}
+                item={isEditItem}
+                handleClose={handleEditClose}
+              />
+            )}
+            {!isEdit && <AddItemBill handleItem={handleItem} />}
           </div>
         </div>
 
