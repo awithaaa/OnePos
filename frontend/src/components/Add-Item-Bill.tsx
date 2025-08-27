@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../services/api";
+import DialogBox from "./DialogBox";
 
 interface Items {
   id: number;
@@ -23,12 +24,28 @@ export default function AddItemBill({ handleItem }: Props) {
   const [isUnitPrice, setUnitPrice] = useState<string>("");
   const [isDiscount, setDiscount] = useState<any>("0");
 
-  const handleOnIdSUK = async () => {
-    const res = await api.get(`/items?id=${Number(isId)}`);
-    setName(res.data.item.name);
-    setBrand(res.data.item.brand);
-    setUnitPrice(res.data.item.salePrice);
-    setDiscount(res.data.item.discount);
+  const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [isMsg, setMsg] = useState<string>("");
+  const [isMsgTitle, setMsgTitle] = useState<string>("");
+
+  const handleOnIdSUK = async (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      try {
+        const res = await api.get(`/items?id=${Number(isId)}`);
+        setName(res.data.item.name);
+        setBrand(res.data.item.brand);
+        setUnitPrice(res.data.item.salePrice);
+        setDiscount(res.data.item.discount);
+      } catch (error: any) {
+        if (error.status === 404) {
+          setMsg(error.response.data.message);
+          setMsgTitle(error.response.data.error);
+          setDialogOpen(true);
+        }
+      }
+    }
   };
 
   const handleAddItem = () => {
@@ -136,6 +153,14 @@ export default function AddItemBill({ handleItem }: Props) {
           </div>
         </div>
       </div>
+
+      <DialogBox
+        isOpen={isDialogOpen}
+        onClose={() => setDialogOpen(false)}
+        message={isMsg}
+        title={isMsgTitle}
+        type="error"
+      />
     </>
   );
 }
