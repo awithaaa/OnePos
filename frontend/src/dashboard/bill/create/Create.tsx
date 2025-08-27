@@ -7,6 +7,7 @@ import EditItemBill from "../../../components/Edit-Item-Bill";
 import PaymentDialogBox from "../../../components/Dialog/Payment-Dialog";
 import { useAuth } from "../../../contexts/AuthContext";
 import { api } from "../../../services/api";
+import DialogBox from "../../../components/DialogBox";
 
 interface Items {
   id: number;
@@ -26,6 +27,11 @@ export default function CreateBill() {
   const [isEditIndex, setEditIndex] = useState<number>(0);
   const [isEditItem, setEditItem] = useState<Items | null>();
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
+
+  const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
+  const [isMsg, setMsg] = useState<string>("");
+  const [isType, setType] = useState<"success" | "error">("error");
+  const [isMsgTitle, setMsgTitle] = useState<string>("");
 
   const columns = [
     { header: "ID", width: "w-1/20" },
@@ -48,25 +54,55 @@ export default function CreateBill() {
   const tax = subtotal * 0.0;
   const total = subtotal + tax - discount;
 
-  const handlePaymentProcess = async () => {
-    const body = {
-      total,
-      customer,
-      saleItems: items.map((i) => ({
-        itemId: i.id,
-        quantity: i.qty,
-        price: i.unitPrice,
-        discount: i.discount,
-      })),
-    };
+  const handlePaymentProcess = () => {
+    handleSaveBill(false);
+  };
+
+  const handleSaveBill = async (draft: boolean) => {
+    if (items.length === 0) {
+      newAlert("Error", "Items not found for bill!", "error");
+      return;
+    }
+    let body;
+    if (draft) {
+      body = {
+        total,
+        customer,
+        draft,
+        saleItems: items.map((i) => ({
+          itemId: i.id,
+          quantity: i.qty,
+          price: i.unitPrice,
+          discount: i.discount,
+        })),
+      };
+    } else {
+      body = {
+        total,
+        customer,
+        saleItems: items.map((i) => ({
+          itemId: i.id,
+          quantity: i.qty,
+          price: i.unitPrice,
+          discount: i.discount,
+        })),
+      };
+    }
 
     try {
       await api.post("/sales", body);
-      alert("Bill created successfully!");
-    } catch (err) {
+      newAlert("Bill created", "Bill created successfully!", "success");
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to create bill");
+      newAlert("Bill created", err.response.data.message, "error");
     }
+  };
+
+  const newAlert = (title: string, msg: string, type?: any) => {
+    setType(type);
+    setMsgTitle(title);
+    setMsg(msg);
+    setAlertOpen(true);
   };
 
   const handleItem = (item: Items) => {
@@ -214,7 +250,10 @@ export default function CreateBill() {
 
                 <div className="flex justify-end mt-6">
                   <div className="flex gap-4">
-                    <button className="w-[125px] py-7 rounded-xl outline-2 flex flex-col justify-center items-center cursor-pointer">
+                    <button
+                      className="w-[125px] py-7 rounded-xl outline-2 flex flex-col justify-center items-center cursor-pointer"
+                      onClick={() => handleSaveBill(true)}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="40px"
@@ -260,27 +299,6 @@ export default function CreateBill() {
             {!isEdit && <AddItemBill handleItem={handleItem} />}
           </div>
         </div>
-
-        {/* <div>
-          <p className="font-bold text-xl">Add Item</p>
-          <div className="flex justify-between gap-4 my-3">
-            <div className="flex flex-col gap-2">
-              <label className="font-semibold text-base">ID/ SUK</label>
-              <input
-                className="w-96 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                type="text"
-              />
-            </div>
-
-            <div className="flex flex-col gap-2 w-full">
-              <label className="font-semibold text-base">Item Name</label>
-              <input
-                className="w-full text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                type="text"
-              />
-            </div>
-          </div>
-        </div> */}
       </div>
 
       <PaymentDialogBox
@@ -293,6 +311,13 @@ export default function CreateBill() {
           tax: tax,
           total: total,
         }}
+      />
+      <DialogBox
+        isOpen={isAlertOpen}
+        onClose={() => setAlertOpen(false)}
+        message={isMsg}
+        title={isMsgTitle}
+        type={isType}
       />
     </>
   );

@@ -40,7 +40,7 @@ export default function BillTable({ data }: Props) {
                 {item.customer}
               </td>
               <td className="border-r-1 border-gray-200 px-4 py-4">
-                {item.draft || "-"}
+                {item.draft ? "true" : "-"}
               </td>
               <td className="border-r-1 border-gray-200 px-4 py-4">
                 {item.total || "-"}
