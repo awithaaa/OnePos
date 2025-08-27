@@ -24,9 +24,9 @@ export default function AddItemBill({ handleItem }: Props) {
   const [isUnitPrice, setUnitPrice] = useState<string>("");
   const [isDiscount, setDiscount] = useState<any>("0");
 
-  const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [isMsg, setMsg] = useState<string>("");
-  const [isMsgTitle, setMsgTitle] = useState<string>("");
+  const [isDialogOpen, setDialogOpen] = useState<boolean>(true);
+  const [isMsg, setMsg] = useState<string>("I don't know");
+  const [isMsgTitle, setMsgTitle] = useState<string>("ERROR");
 
   const handleOnIdSUK = async (
     event: React.KeyboardEvent<HTMLInputElement>
