@@ -12,6 +12,7 @@ import {
 interface DialogProps {
   isOpen: boolean;
   onClose: () => void;
+  onProcess: () => void;
   data: { subtotal: number; discount: number; tax: number; total: number };
 }
 
@@ -24,6 +25,7 @@ export default function PaymentDialogBox({
   isOpen,
   onClose,
   data,
+  onProcess,
 }: DialogProps) {
   const [paidAmount, setPaidAmount] = useState<string>();
   const [balance, setBalance] = useState<string>("0");
@@ -37,6 +39,11 @@ export default function PaymentDialogBox({
       const balance = Number(paidAmount) - data.total;
       setBalance(balance.toString());
     }
+  };
+
+  const handleProcess = () => {
+    onProcess();
+    onClose();
   };
 
   return (
@@ -171,6 +178,7 @@ export default function PaymentDialogBox({
                   <button
                     type="button"
                     className="w-[90%] py-2.5 bg-black text-white font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
+                    onClick={handleProcess}
                   >
                     {loading ? "Processing..." : "Process"}
                   </button>

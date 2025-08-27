@@ -5,6 +5,8 @@ import { useState } from "react";
 import AddItemBill from "../../../components/Add-Item-Bill";
 import EditItemBill from "../../../components/Edit-Item-Bill";
 import PaymentDialogBox from "../../../components/Dialog/Payment-Dialog";
+import { useAuth } from "../../../contexts/AuthContext";
+import { api } from "../../../services/api";
 
 interface Items {
   id: number;
@@ -17,6 +19,7 @@ interface Items {
 }
 
 export default function CreateBill() {
+  const { user } = useAuth();
   const [customer, setCustomer] = useState<string>("");
   const [items, setItems] = useState<Items[]>([]);
   const [isEdit, setEdit] = useState<boolean>();
@@ -44,6 +47,35 @@ export default function CreateBill() {
   );
   const tax = subtotal * 0.0;
   const total = subtotal + tax - discount;
+
+  const handlePaymentProcess = () => {
+    handlePayment();
+  };
+
+  const handlePayment = async () => {
+    if (user) {
+      const userId = Number(user.id);
+      const body = {
+        userId,
+        total,
+        customer,
+        saleItems: items.map((i) => ({
+          itemId: i.id,
+          quantity: i.qty,
+          price: i.unitPrice,
+          discount: i.discount,
+        })),
+      };
+
+      try {
+        await api.post("/sales", body);
+        alert("Bill created successfully!");
+      } catch (err) {
+        console.error(err);
+        alert("Failed to create bill");
+      }
+    }
+  };
 
   const handleItem = (item: Items) => {
     setItems([...items, item]);
@@ -262,6 +294,7 @@ export default function CreateBill() {
       <PaymentDialogBox
         isOpen={isDialogOpen}
         onClose={() => setDialogOpen(false)}
+        onProcess={handlePaymentProcess}
         data={{
           subtotal: subtotal,
           discount: discount,
