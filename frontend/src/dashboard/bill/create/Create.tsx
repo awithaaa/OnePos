@@ -4,6 +4,7 @@ import InfoIcon from "../../../assets/arrow_right.svg";
 import { useState } from "react";
 import AddItemBill from "../../../components/Add-Item-Bill";
 import EditItemBill from "../../../components/Edit-Item-Bill";
+import PaymentDialogBox from "../../../components/Dialog/Payment-Dialog";
 
 interface Items {
   id: number;
@@ -21,6 +22,7 @@ export default function CreateBill() {
   const [isEdit, setEdit] = useState<boolean>();
   const [isEditIndex, setEditIndex] = useState<number>(0);
   const [isEditItem, setEditItem] = useState<Items | null>();
+  const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const columns = [
     { header: "ID", width: "w-1/20" },
@@ -40,7 +42,7 @@ export default function CreateBill() {
     (sum, item) => sum + (item.discount || 0) * item.qty,
     0
   );
-  const tax = subtotal * 0.08;
+  const tax = subtotal * 0.0;
   const total = subtotal + tax - discount;
 
   const handleItem = (item: Items) => {
@@ -176,13 +178,46 @@ export default function CreateBill() {
                       <span>${discount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Tax (8%)</span>
+                      <span className="text-gray-600">Tax (0%)</span>
                       <span>${tax.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg border-t pt-2">
                       <span>Total</span>
                       <span>${total.toFixed(2)}</span>
                     </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end mt-6">
+                  <div className="flex gap-4">
+                    <button className="w-[125px] py-7 rounded-xl outline-2 flex flex-col justify-center items-center cursor-pointer">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="40px"
+                        viewBox="0 -960 960 960"
+                        width="40px"
+                        fill="#000000"
+                      >
+                        <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z" />
+                      </svg>
+                      <p>Save as draft</p>
+                    </button>
+
+                    <button
+                      className="w-[125px] py-7 rounded-xl bg-black text-white flex flex-col justify-center items-center cursor-pointer"
+                      onClick={(e) => setDialogOpen(true)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="40px"
+                        viewBox="0 -960 960 960"
+                        width="40px"
+                        fill="#FFFFFF"
+                      >
+                        <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z" />
+                      </svg>
+                      <p>Process</p>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -223,6 +258,17 @@ export default function CreateBill() {
           </div>
         </div> */}
       </div>
+
+      <PaymentDialogBox
+        isOpen={isDialogOpen}
+        onClose={() => setDialogOpen(false)}
+        data={{
+          subtotal: subtotal,
+          discount: discount,
+          tax: tax,
+          total: total,
+        }}
+      />
     </>
   );
 }
