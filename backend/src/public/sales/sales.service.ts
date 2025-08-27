@@ -6,9 +6,11 @@ import { CreateSalesDto } from './dto/create-sales.dto';
 export class SalesService {
   constructor(private prisma: PrismaService) {}
 
-  async createSale(data: CreateSalesDto) {
+  async createSale(data: CreateSalesDto, userId: number) {
     const { saleItems, ...sales } = data;
-    const sale = await this.prisma.sale.create({ data: sales });
+    const sale = await this.prisma.sale.create({
+      data: { userId: userId, ...sales },
+    });
     for (const saleItem of saleItems) {
       const si = await this.prisma.saleItem.create({
         data: { saleId: sale.id, ...saleItem },

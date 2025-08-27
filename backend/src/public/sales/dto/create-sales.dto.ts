@@ -10,10 +10,6 @@ import { CreateSalesItemDto } from './create-sales-item.dto';
 export class CreateSalesDto {
   @IsNumber()
   @IsNotEmpty()
-  userId: number;
-
-  @IsNumber()
-  @IsNotEmpty()
   total: number;
 
   @IsString()

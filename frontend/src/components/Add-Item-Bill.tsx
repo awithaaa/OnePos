@@ -43,6 +43,12 @@ export default function AddItemBill({ handleItem }: Props) {
           setMsg(error.response.data.message);
           setMsgTitle(error.response.data.error);
           setDialogOpen(true);
+          setId("");
+          setName("");
+          setBrand("");
+          setUnitPrice("");
+          setDiscount("0");
+          setQuantity("1");
         }
       }
     }

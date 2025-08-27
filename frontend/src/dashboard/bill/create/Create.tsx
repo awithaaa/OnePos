@@ -48,32 +48,24 @@ export default function CreateBill() {
   const tax = subtotal * 0.0;
   const total = subtotal + tax - discount;
 
-  const handlePaymentProcess = () => {
-    handlePayment();
-  };
+  const handlePaymentProcess = async () => {
+    const body = {
+      total,
+      customer,
+      saleItems: items.map((i) => ({
+        itemId: i.id,
+        quantity: i.qty,
+        price: i.unitPrice,
+        discount: i.discount,
+      })),
+    };
 
-  const handlePayment = async () => {
-    if (user) {
-      const userId = Number(user.id);
-      const body = {
-        userId,
-        total,
-        customer,
-        saleItems: items.map((i) => ({
-          itemId: i.id,
-          quantity: i.qty,
-          price: i.unitPrice,
-          discount: i.discount,
-        })),
-      };
-
-      try {
-        await api.post("/sales", body);
-        alert("Bill created successfully!");
-      } catch (err) {
-        console.error(err);
-        alert("Failed to create bill");
-      }
+    try {
+      await api.post("/sales", body);
+      alert("Bill created successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create bill");
     }
   };
 

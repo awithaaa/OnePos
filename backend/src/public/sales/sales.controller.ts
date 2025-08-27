@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { SalesService } from './sales.service';
@@ -17,8 +18,8 @@ export class SalesController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async createSale(@Body() data: CreateSalesDto) {
-    return this.salesService.createSale(data);
+  async createSale(@Request() req, @Body() data: CreateSalesDto) {
+    return this.salesService.createSale(data, req.user.userId);
   }
 
   @Get()

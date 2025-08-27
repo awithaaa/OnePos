@@ -160,6 +160,7 @@ export default function PaymentDialogBox({
                         className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
                         type="text"
                         value={balance}
+                        readOnly
                       />
                     </div>
                   </div>
