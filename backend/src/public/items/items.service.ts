@@ -70,6 +70,13 @@ export class ItemsService {
     return { item, count };
   }
 
+  async getItemsBySuk(suk: string) {
+    const item = await this.prisma.item.findUnique({ where: { suk: suk } });
+    if (!item) throw new NotFoundException('Item not found!');
+    const count = 1;
+    return { item, count };
+  }
+
   async updateItemById(id: number, data: UpdateItemDto) {
     const item = await this.prisma.item.findUnique({ where: { id: id } });
     if (!item) throw new NotFoundException('Items not found!');

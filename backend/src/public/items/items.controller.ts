@@ -34,6 +34,7 @@ export class ItemsController {
     @Query('id') id?: string,
     @Query('name') name?: string,
     @Query('brand') brand?: string,
+    @Query('suk') idsuk?: string,
   ) {
     if (id) {
       return this.itemsService.getItemsById(Number(id));
@@ -43,6 +44,9 @@ export class ItemsController {
     }
     if (brand) {
       return this.itemsService.getItemsByBrand(brand);
+    }
+    if (idsuk) {
+      return this.itemsService.getItemsBySuk(idsuk);
     }
     if (start !== undefined && size !== undefined) {
       return this.itemsService.getItems(Number(start), Number(size));

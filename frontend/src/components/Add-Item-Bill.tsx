@@ -17,12 +17,12 @@ interface Props {
 
 export default function AddItemBill({ handleItem }: Props) {
   const [isId, setId] = useState<string>();
-  const [isSuk, setSuk] = useState<string>("");
   const [isName, setName] = useState<string>("");
   const [isBrand, setBrand] = useState<string>("");
   const [isQuantity, setQuantity] = useState<string>("1");
   const [isUnitPrice, setUnitPrice] = useState<string>("");
   const [isDiscount, setDiscount] = useState<any>("0");
+  const [isSearchType, setSearchType] = useState<string>("suk");
 
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isMsg, setMsg] = useState<string>("");
@@ -33,11 +33,21 @@ export default function AddItemBill({ handleItem }: Props) {
   ) => {
     if (event.key === "Enter") {
       try {
-        const res = await api.get(`/items?id=${Number(isId)}`);
-        setName(res.data.item.name);
-        setBrand(res.data.item.brand);
-        setUnitPrice(res.data.item.salePrice);
-        setDiscount(res.data.item.discount);
+        if (isSearchType === "suk") {
+          const res = await api.get(`/items?suk=${isId}`);
+          setName(res.data.item.name);
+          setBrand(res.data.item.brand);
+          setUnitPrice(res.data.item.salePrice);
+          setDiscount(res.data.item.discount);
+          return;
+        } else if (isSearchType === "id") {
+          const res = await api.get(`/items?id=${Number(isId)}`);
+          setName(res.data.item.name);
+          setBrand(res.data.item.brand);
+          setUnitPrice(res.data.item.salePrice);
+          setDiscount(res.data.item.discount);
+          return;
+        }
       } catch (error: any) {
         if (error.status === 404) {
           setMsg(error.response.data.message);
@@ -83,7 +93,16 @@ export default function AddItemBill({ handleItem }: Props) {
         <div className="my-2 w-full h-0.5 bg-neutral-200"></div>
         <div className="flex flex-col gap-2">
           <div className="flex flex-col">
-            <label className="ml-1 mb-1">ID/ SUK</label>
+            <div className="w-24 bg-white py-1.5 px-2 rounded-r-lg">
+              <select
+                className="w-full text-base bg-white focus:outline-none"
+                value={isSearchType}
+                onChange={(e) => setSearchType(e.target.value)}
+              >
+                <option value="suk">SUK</option>
+                <option value="id">ID</option>
+              </select>
+            </div>
             <input
               className="text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
               type="text"
