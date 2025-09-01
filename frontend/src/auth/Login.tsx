@@ -1,27 +1,34 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import ErrorDialog from "../components/ErrorDialog";
+import DialogBox from "../components/DialogBox";
 
 export default function Login() {
   const { login } = useAuth();
   const [email, setEmail] = useState("avwithanage2006@gmail.com");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleLogin = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    setLoading(true);
-    setErr(null);
+  const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
+  const [isMsg, setMsg] = useState<string>("");
+  const [isType, setType] = useState<"success" | "error">("error");
+  const [isMsgTitle, setMsgTitle] = useState<string>("");
+
+  const handleLogin = async () => {
     try {
       await login(email, password);
     } catch (error: any) {
-      setErr(error?.response?.data?.message || error.message || "Login failed");
-      setIsDialogOpen(true);
-    } finally {
-      setLoading(false);
+      newAlert(
+        "Login error",
+        error?.response?.data?.message || error.message || "Login failed",
+        "error"
+      );
     }
+  };
+
+  const newAlert = (title: string, msg: string, type?: any) => {
+    setType(type);
+    setMsgTitle(title);
+    setMsg(msg);
+    setAlertOpen(true);
   };
 
   return (
@@ -45,6 +52,7 @@ export default function Login() {
 
             <div className="mt-10">
               <button
+                type="button"
                 onClick={handleLogin}
                 className="w-64 py-3 bg-black text-white rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
               >
@@ -57,10 +65,12 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <ErrorDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        message={err}
+      <DialogBox
+        isOpen={isAlertOpen}
+        onClose={() => setAlertOpen(false)}
+        message={isMsg}
+        title={isMsgTitle}
+        type={isType}
       />
     </>
   );

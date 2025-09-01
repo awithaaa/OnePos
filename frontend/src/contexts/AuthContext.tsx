@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { saveTokens, clearTokens, getAccessToken } from "../services/token";
 import { useNavigate } from "react-router-dom";
-import { api } from "../services/api";
+import { api, apiWithOutRT } from "../services/api";
 
 interface User {
   id: string;
@@ -50,13 +50,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const login = async (email: string, password: string) => {
-    const res = await api.post("/auth/login", { email, password });
-    const { access_token } = res.data;
-    if (!access_token) throw new Error("No access token from login");
-    saveTokens(access_token);
-    setAccessTokenState(access_token);
-    await fetchUser();
-    navigate("/dashboard");
+    try {
+      const res = await apiWithOutRT.post("/auth/login", { email, password });
+      const { access_token } = res.data;
+      if (!access_token) throw new Error("No access token from login");
+      saveTokens(access_token);
+      setAccessTokenState(access_token);
+      await fetchUser();
+      navigate("/dashboard");
+    } catch (error: any) {
+      if (error.status === 401) {
+        throw new Error("Invalid email or password");
+      } else {
+        throw new Error("Login failed, please try again");
+      }
+    }
   };
 
   const logout = () => {

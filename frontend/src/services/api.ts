@@ -13,6 +13,14 @@ function onRefreshed(token: string) {
   refreshSubscribers = [];
 }
 
+export const apiWithOutRT: AxiosInstance = axios.create({
+  baseURL: "http://localhost:8000",
+  withCredentials: true,
+  headers: {
+    Accept: "application/json",
+  },
+});
+
 export const api: AxiosInstance = axios.create({
   baseURL: "http://localhost:8000",
   withCredentials: true,
