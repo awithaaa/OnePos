@@ -164,6 +164,7 @@ export default function CreateBill() {
       setMsg("Any unsaved changes will be lost.");
       setAlertOpenBack(true);
     }
+    navigate("/dashboard");
   };
 
   return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
-import ErrorDialog from "./ErrorDialog";
+import DialogBox from "./DialogBox";
 
 interface Props {
   inventory: any;
@@ -10,8 +10,11 @@ interface Props {
 export default function EditInventory({ inventory, type }: Props) {
   const [isInventory, setInventory] = useState<any>(inventory);
   const [isChange, setChange] = useState<boolean>();
-  const [msg, setMsg] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
+  const [isMsg, setMsg] = useState<string>("");
+  const [isType, setType] = useState<"success" | "error">("error");
+  const [isMsgTitle, setMsgTitle] = useState<string>("");
 
   useEffect(() => {}, []);
 
@@ -37,21 +40,31 @@ export default function EditInventory({ inventory, type }: Props) {
   };
 
   const handleSubmit = async () => {
-    let query = ``;
-    if (type == "live") {
-      query = `/inventory/${Number(isInventory.id)}`;
-    } else {
-      query = `/inventory/empty/${Number(isInventory.id)}`;
+    try {
+      let query = ``;
+      if (type == "live") {
+        query = `/inventory/${Number(isInventory.id)}`;
+      } else {
+        query = `/inventory/empty/${Number(isInventory.id)}`;
+      }
+      const res = await api.patch(query, {
+        quantity: Number(isInventory.quantity),
+        stock: Number(isInventory.stock),
+        price: Number(isInventory.price),
+        salePrice: Number(isInventory.salePrice),
+      });
+      setInventory(res.data.updatedInventory);
+      newAlert("Inventory updated", res.data.message, "success");
+    } catch (error: any) {
+      newAlert(error.response.data.error, error.response.data.message, "error");
     }
-    const res = await api.patch(query, {
-      quantity: Number(isInventory.quantity),
-      stock: Number(isInventory.stock),
-      price: Number(isInventory.price),
-      salePrice: Number(isInventory.salePrice),
-    });
-    setMsg(res.data.message);
-    setInventory(res.data.updatedInventory);
-    setIsDialogOpen(true);
+  };
+
+  const newAlert = (title: string, msg: string, type?: any) => {
+    setType(type);
+    setMsgTitle(title);
+    setMsg(msg);
+    setAlertOpen(true);
   };
 
   return (
@@ -150,10 +163,12 @@ export default function EditInventory({ inventory, type }: Props) {
         </div>
       </div>
 
-      <ErrorDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        message={msg}
+      <DialogBox
+        isOpen={isAlertOpen}
+        onClose={() => setAlertOpen(false)}
+        message={isMsg}
+        title={isMsgTitle}
+        type={isType}
       />
     </>
   );

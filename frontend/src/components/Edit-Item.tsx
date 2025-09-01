@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
-import ErrorDialog from "./ErrorDialog";
+import DialogBox from "./DialogBox";
 
 interface Props {
   item: any;
@@ -9,9 +9,12 @@ interface Props {
 export default function EditItem({ item }: Props) {
   const [isItem, setItem] = useState<any>(item);
   const [isChange, setChange] = useState<boolean>();
-  const [msg, setMsg] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDiscPrec, setDiscPrec] = useState<string>("");
+
+  const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
+  const [isMsg, setMsg] = useState<string>("");
+  const [isType, setType] = useState<"success" | "error">("error");
+  const [isMsgTitle, setMsgTitle] = useState<string>("");
 
   useEffect(() => {
     const discount = (Number(isItem.discount) * 100) / Number(isItem.salePrice);
@@ -40,17 +43,20 @@ export default function EditItem({ item }: Props) {
   };
 
   const handleSubmit = async () => {
-    const res = await api.patch(`/items/${Number(isItem.id)}`, {
-      name: isItem.name,
-      brand: isItem.brand,
-      suk: isItem.suk,
-      price: Number(isItem.price),
-      salePrice: Number(isItem.salePrice),
-      discount: Number(isItem.discount),
-    });
-    setMsg(res.data.message);
-    setItem(res.data.item);
-    setIsDialogOpen(true);
+    try {
+      const res = await api.patch(`/items/${Number(isItem.id)}`, {
+        name: isItem.name,
+        brand: isItem.brand,
+        suk: isItem.suk,
+        price: Number(isItem.price),
+        salePrice: Number(isItem.salePrice),
+        discount: Number(isItem.discount),
+      });
+      setItem(res.data.item);
+      newAlert("Item updated", res.data.message, "success");
+    } catch (error: any) {
+      newAlert(error.response.data.error, error.response.data.message, "error");
+    }
   };
 
   const handleDiscountPrecentage = (
@@ -64,6 +70,13 @@ export default function EditItem({ item }: Props) {
         ["discount"]: discount,
       }));
     }
+  };
+
+  const newAlert = (title: string, msg: string, type?: any) => {
+    setType(type);
+    setMsgTitle(title);
+    setMsg(msg);
+    setAlertOpen(true);
   };
 
   return (
@@ -187,10 +200,12 @@ export default function EditItem({ item }: Props) {
         </div>
       </div>
 
-      <ErrorDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        message={msg}
+      <DialogBox
+        isOpen={isAlertOpen}
+        onClose={() => setAlertOpen(false)}
+        message={isMsg}
+        title={isMsgTitle}
+        type={isType}
       />
     </>
   );
