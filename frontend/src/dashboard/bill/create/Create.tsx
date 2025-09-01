@@ -1,11 +1,10 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import arrow_left from "../../../assets/arrow_left.svg";
 import InfoIcon from "../../../assets/arrow_right.svg";
 import { useState } from "react";
 import AddItemBill from "../../../components/Add-Item-Bill";
 import EditItemBill from "../../../components/Edit-Item-Bill";
 import PaymentDialogBox from "../../../components/Dialog/Payment-Dialog";
-import { useAuth } from "../../../contexts/AuthContext";
 import { api } from "../../../services/api";
 import DialogBox from "../../../components/DialogBox";
 
@@ -20,7 +19,7 @@ interface Items {
 }
 
 export default function CreateBill() {
-  const { user } = useAuth();
+  const navigate = useNavigate();
   const [customer, setCustomer] = useState<string>("");
   const [items, setItems] = useState<Items[]>([]);
   const [isEdit, setEdit] = useState<boolean>();
@@ -29,6 +28,7 @@ export default function CreateBill() {
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
+  const [isAlertOpenBack, setAlertOpenBack] = useState<boolean>(false);
   const [isMsg, setMsg] = useState<string>("");
   const [isType, setType] = useState<"success" | "error">("error");
   const [isMsgTitle, setMsgTitle] = useState<string>("");
@@ -147,16 +147,30 @@ export default function CreateBill() {
     });
   };
 
+  const handleBackTrue = () => {
+    navigate("/dashboard");
+    setAlertOpenBack(false);
+  };
+
+  const handleBack = () => {
+    if (items.length > 0) {
+      setType("error");
+      setMsgTitle("Are you sure you want to go back?");
+      setMsg("Any unsaved changes will be lost.");
+      setAlertOpenBack(true);
+    }
+  };
+
   return (
     <>
       <div className="bg-[#f5f5f5] min-h-[calc(100vh-100px)] px-10 pb-4 mt-1">
         <div className="w-full flex gap-2 items-center">
-          <Link
-            to={`/dashboard/bill`}
+          <button
             className="flex items-center w-9 rounded-full p-2 bg-gray-200 hover:bg-sky-200 transition"
+            onClick={handleBack}
           >
             <img src={arrow_left} alt="info" className="cursor-pointer w-9" />
-          </Link>
+          </button>
           <h1 className="text-2xl font-bold">Create New Bill</h1>
         </div>
 
@@ -318,6 +332,15 @@ export default function CreateBill() {
         message={isMsg}
         title={isMsgTitle}
         type={isType}
+      />
+      <DialogBox
+        isOpen={isAlertOpenBack}
+        onClose={() => setAlertOpenBack(false)}
+        message={isMsg}
+        title={isMsgTitle}
+        type={isType}
+        secondButton="Yes, go back"
+        sbAction={handleBackTrue}
       />
     </>
   );
