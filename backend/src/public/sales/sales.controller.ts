@@ -24,7 +24,18 @@ export class SalesController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getSales(@Query('start') start?: string, @Query('size') size?: string) {
+  async getSales(
+    @Query('start') start?: string,
+    @Query('size') size?: string,
+    @Query('id') id?: string,
+    @Query('customer') customer?: string,
+  ) {
+    if (id) {
+      return this.salesService.getSaleById(Number(id));
+    }
+    if (customer) {
+      return this.salesService.getSalesByCustomer(customer);
+    }
     if (start !== undefined && size !== undefined) {
       return this.salesService.getSales(Number(start), Number(size));
     }

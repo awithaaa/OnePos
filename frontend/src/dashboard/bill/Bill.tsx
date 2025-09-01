@@ -51,10 +51,11 @@ export default function Bill() {
         }
         try {
           const res = await api.get(query);
+          console.log("yeh");
           if (isSearchType == "id") {
-            setSales(res.data.sales);
-          } else {
-            setSales(res.data.sales);
+            setSales([res.data.sale]);
+          } else if (isSearchType == "customer") {
+            setSales(res.data.sale);
           }
           setFilters(`Search ${isSearchType}: ${isSearch}`);
           setCount(
@@ -99,19 +100,19 @@ export default function Bill() {
                 <input
                   className="w-64 text-base px-2 py-1.5 rounded-l-lg placeholder:text-gray-400 border-r-2 border-gray-300 focus:outline-none"
                   type="text"
-                  placeholder="Search Bill"
+                  placeholder="Search Bills"
                   value={isSearch}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
                 />
-                <div className="w-24 bg-white py-1.5 px-2 rounded-r-lg">
+                <div className="w-28 bg-white py-1.5 px-2 rounded-r-lg">
                   <select
                     className="w-full text-base bg-white focus:outline-none"
                     value={isSearchType}
                     onChange={(e) => setSearchType(e.target.value)}
                   >
                     <option value="id">ID</option>
-                    <option value="name">Customer</option>
+                    <option value="customer">Customer</option>
                   </select>
                 </div>
               </div>

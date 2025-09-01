@@ -34,6 +34,27 @@ export class SalesService {
     return { count, sales };
   }
 
+  async getSaleById(id: number) {
+    const sale = await this.prisma.sale.findUnique({ where: { id: id } });
+    if (!sale) throw new NotFoundException('Sale not found!');
+    const count = 1;
+    return { sale, count };
+  }
+
+  async getSalesByCustomer(name: string) {
+    const sale = await this.prisma.sale.findMany({
+      where: {
+        customer: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      },
+    });
+    if (!sale) throw new NotFoundException('Sales not found!');
+    const count = sale.length;
+    return { sale, count };
+  }
+
   async getSaleWithItems(id: number) {
     const sale = await this.prisma.sale.findUnique({ where: { id: id } });
     if (!sale) throw new NotFoundException('Sale not found!');

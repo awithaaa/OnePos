@@ -103,7 +103,7 @@ export default function Store() {
                 <input
                   className="w-64 text-base px-2 py-1.5 rounded-l-lg placeholder:text-gray-400 border-r-2 border-gray-300 focus:outline-none"
                   type="text"
-                  placeholder="Search Users"
+                  placeholder="Search Items"
                   value={isSearch}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
