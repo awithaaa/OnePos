@@ -64,17 +64,26 @@ export default function AddItemBill({ handleItem }: Props) {
     }
   };
 
-  const handleAddItem = () => {
+  const handleAddItem = async () => {
     if (isName) {
-      handleItem({
-        id: Number(isId),
-        name: isName,
-        qty: Number(isQuantity),
-        unitPrice: Number(isUnitPrice),
-        total: Number(isUnitPrice) * Number(isQuantity),
-        discount: Number(isDiscount),
-      });
-      handleClose();
+      try {
+        const res = await api.get(
+          `/items/checkqty?id=${isId}&qty=${isQuantity}&type=${isSearchType}`
+        );
+        handleItem({
+          id: Number(isId),
+          name: isName,
+          qty: Number(isQuantity),
+          unitPrice: Number(isUnitPrice),
+          total: Number(isUnitPrice) * Number(isQuantity),
+          discount: Number(isDiscount),
+        });
+        handleClose();
+      } catch (error: any) {
+        setMsg(error.response.data.message);
+        setMsgTitle(error.response.data.error);
+        setDialogOpen(true);
+      }
     }
   };
 

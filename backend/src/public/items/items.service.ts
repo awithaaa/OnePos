@@ -95,4 +95,27 @@ export class ItemsService {
     await this.prisma.item.delete({ where: { id: id } });
     return { message: 'Item deleted succesfully!' };
   }
+
+  async checkItemQty(id: string, qty: number, type) {
+    let latestInventory;
+    if (type === 'id') {
+      const itemId = Number(id);
+      latestInventory = await this.prisma.inventory.findFirst({
+        where: { itemId: itemId },
+        orderBy: { createdAt: 'desc' },
+      });
+    } else if (type === 'suk') {
+      const item = await this.prisma.item.findUnique({ where: { suk: id } });
+      latestInventory = await this.prisma.inventory.findFirst({
+        where: { itemId: item?.id },
+        orderBy: { createdAt: 'desc' },
+      });
+    }
+
+    if (!latestInventory || latestInventory.quantity < qty) {
+      throw new NotFoundException(`Not enough stock for item.`);
+    }
+
+    return { message: 'ok' };
+  }
 }

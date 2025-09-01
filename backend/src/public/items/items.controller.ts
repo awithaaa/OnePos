@@ -54,6 +54,16 @@ export class ItemsController {
     return this.itemsService.getItems();
   }
 
+  @Get('/checkqty')
+  @UseGuards(JwtAuthGuard)
+  async checkItemQty(
+    @Query('id') id: string,
+    @Query('qty') qty: string,
+    @Query('type') type: string,
+  ) {
+    return this.itemsService.checkItemQty(id, Number(qty), type);
+  }
+
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')

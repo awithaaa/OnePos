@@ -8,10 +8,37 @@ export class SalesService {
 
   async createSale(data: CreateSalesDto, userId: number) {
     const { saleItems, ...sales } = data;
+
     const sale = await this.prisma.sale.create({
       data: { userId: userId, ...sales },
     });
     for (const saleItem of saleItems) {
+      const latestInventory = await this.prisma.inventory.findFirst({
+        where: { itemId: saleItem.itemId },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      const updatedInv = await this.prisma.inventory.update({
+        where: { id: latestInventory?.id },
+        data: { quantity: { decrement: saleItem.quantity } },
+      });
+
+      if (updatedInv.quantity === 0) {
+        const empty = await this.prisma.emptyInventory.create({
+          data: {
+            itemId: updatedInv.itemId,
+            quantity: 0,
+            stock: updatedInv.stock,
+            price: updatedInv.price,
+            salePrice: updatedInv.salePrice,
+            createdAt: updatedInv.createdAt,
+          },
+        });
+        await this.prisma.inventory.delete({
+          where: { id: updatedInv.id },
+        });
+      }
+
       const si = await this.prisma.saleItem.create({
         data: { saleId: sale.id, ...saleItem },
       });

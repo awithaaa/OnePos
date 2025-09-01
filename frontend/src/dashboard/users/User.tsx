@@ -21,7 +21,7 @@ export default function UserDetail() {
   }, []);
 
   const deleteUser = async () => {
-    const res = await api.delete(`/users/${id}`);
+    await api.delete(`/users/${id}`);
     navigate("/dashboard/users");
   };
 
