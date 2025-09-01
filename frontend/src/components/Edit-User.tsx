@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
-import ErrorDialog from "./ErrorDialog";
 import DialogBox from "./DialogBox";
 
 interface Props {

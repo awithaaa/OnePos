@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, redirect, useLocation, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import arrow_left from "../../assets/arrow_left.svg";
 import EditIcon from "../../assets/edit.svg";
 import { api } from "../../services/api";
@@ -7,6 +7,7 @@ import UserDetailBox from "../../components/User-Detail";
 import EditUser from "../../components/Edit-User";
 
 export default function UserDetail() {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isUser, setUser] = useState<any>();
   const [isEdit, setEdit] = useState<boolean>();
@@ -19,7 +20,10 @@ export default function UserDetail() {
     fetchUser();
   }, []);
 
-  const deleteUser = async () => {};
+  const deleteUser = async () => {
+    const res = await api.delete(`/users/${id}`);
+    navigate("/dashboard/users");
+  };
 
   if (isUser) {
     return (
