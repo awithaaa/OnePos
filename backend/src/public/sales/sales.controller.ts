@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -11,6 +12,8 @@ import {
 import { SalesService } from './sales.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateSalesDto } from './dto/create-sales.dto';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorator/roles.decorator';
 
 @Controller('sales')
 export class SalesController {
@@ -46,5 +49,12 @@ export class SalesController {
   @UseGuards(JwtAuthGuard)
   async getSaleWithItems(@Param('id') id: number) {
     return this.salesService.getSaleWithItems(Number(id));
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async deleteItemById(@Param('id') id: number) {
+    return this.salesService.deleteSaleById(Number(id));
   }
 }

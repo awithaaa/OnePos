@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { api } from "../../services/api";
 import arrow_left from "../../assets/arrow_left.svg";
 import InfoIcon from "../../assets/arrow_right.svg";
@@ -7,6 +7,7 @@ import DialogBox from "../../components/DialogBox";
 import ConfirmationBox from "../../components/Confirmation-Box";
 
 export default function BillEdit() {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isSale, setSale] = useState<any>();
   const [isSaleItems, setSaleItems] = useState<any[]>([]);

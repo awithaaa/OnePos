@@ -95,4 +95,12 @@ export class SalesService {
     });
     return { sale, saleItems };
   }
+
+  async deleteSaleById(id: number) {
+    const sale = await this.prisma.sale.findUnique({ where: { id: id } });
+    if (!sale) throw new NotFoundException('Sales not found!');
+
+    await this.prisma.sale.delete({ where: { id: id } });
+    return { message: 'Sale deleted succesfully!' };
+  }
 }
