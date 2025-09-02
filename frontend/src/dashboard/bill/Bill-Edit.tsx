@@ -9,6 +9,7 @@ export default function BillEdit() {
   const { id } = useParams<{ id: string }>();
   const [isSale, setSale] = useState<any>();
   const [isSaleItems, setSaleItems] = useState<any[]>([]);
+  const [isCreated, setCreated] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
@@ -44,6 +45,8 @@ export default function BillEdit() {
         const res = await api.get(`/sales/${id}`);
         setSale(res.data.sale);
         setSaleItems(res.data.saleItems);
+        const createdDate = new Date(res.data.sale.createdAt);
+        setCreated(createdDate.toLocaleDateString());
       } catch (err: any) {
         newAlert(
           "Failed",
@@ -106,7 +109,7 @@ export default function BillEdit() {
             <input
               className="w-72 text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
               type="text"
-              value={isSale.createdAt}
+              value={isCreated}
               readOnly
             />
           </div>
@@ -120,7 +123,7 @@ export default function BillEdit() {
             <div className="w-full">
               <div className="mt-4 flex flex-col">
                 {isSaleItems && (
-                  <table className="table-fixed w-full  rounded-t-xl overflow-hidden">
+                  <table className="table-fixed w-full  rounded-xl overflow-hidden">
                     <thead className="w-full h-10 bg-black rounded-t-lg text-white">
                       <tr>
                         {columns.map((col, index) => (
@@ -135,7 +138,10 @@ export default function BillEdit() {
                     </thead>
                     <tbody className="bg-white ">
                       {isSaleItems.map((item: any, index: number) => (
-                        <tr key={index} className="border-b border-gray-200">
+                        <tr
+                          key={index}
+                          className="border-b last:border-b-0 border-gray-200"
+                        >
                           <td className="border-r-1 border-l-0 border-gray-200 px-4 py-4 text-center">
                             {index + 1}
                           </td>
@@ -171,7 +177,7 @@ export default function BillEdit() {
               </div>
             </div>
             <div>
-              <div className="mt-4 w-full p-4 bg-white rounded-xl">
+              <div className="mt-4 w-full p-5 bg-white rounded-xl">
                 {/* Totals */}
                 <div>
                   <div className="flex justify-between">
@@ -198,13 +204,13 @@ export default function BillEdit() {
                   <div>
                     <div className="flex justify-end mt-6">
                       <div className="flex gap-4">
-                        <button className="w-[100px] py-7 rounded-xl outline-2 flex flex-col justify-center items-center cursor-pointer">
+                        <button className="w-[100px] py-7 text-[#b60000] rounded-xl outline-2 flex flex-col justify-center items-center cursor-pointer">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             height="40px"
                             viewBox="0 -960 960 960"
                             width="40px"
-                            fill="#000000"
+                            fill="#b60000"
                           >
                             <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
                           </svg>
