@@ -68,7 +68,7 @@ export default function BillEdit() {
   const handleDelete = async () => {
     try {
       const res = await api.delete(`/sales/${id}`);
-      newAlert("Successful", res.data.message, "success");
+      navigate("/dashboard/bill");
     } catch (error: any) {
       newAlert(
         "Failed",

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, redirect, useParams } from "react-router-dom";
+import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import { api } from "../../../services/api";
 import arrow_left from "../../../assets/arrow_left.svg";
 import EditItem from "../../../components/Edit-Item";
@@ -7,14 +7,24 @@ import ItemDetailBox from "../../../components/Item-detail";
 import EditIcon from "../../../assets/edit.svg";
 import InventoryTable from "../../../components/Table/Inventory-Table";
 import AddInventoryDialogBox from "../../../components/Dialog/Add-Inventory-Dialog";
+import ConfirmationBox from "../../../components/Confirmation-Box";
+import DialogBox from "../../../components/DialogBox";
 
 export default function ItemDetail() {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isItem, setItem] = useState<any>();
   const [isEdit, setEdit] = useState<boolean>();
   const [isLiveInve, setLiveInve] = useState<any[]>();
   const [isEmptyInve, setEmptyInve] = useState<any[]>();
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
+
+  const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
+  const [isConfirmation, setConfirmation] = useState<boolean>(false);
+  const [isMsg, setMsg] = useState<string>("");
+  const [isType, setType] = useState<"success" | "error">("error");
+  const [isMsgTitle, setMsgTitle] = useState<string>("");
+  const [isButton, setButton] = useState<string>("");
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -29,8 +39,35 @@ export default function ItemDetail() {
   }, []);
 
   const deleteItem = async () => {
-    const res = await api.delete(`/items/${id}`);
-    redirect("/dashboard/store");
+    try {
+      const res = await api.delete(`/items/${id}`);
+      navigate("/dashboard/store");
+    } catch (error: any) {
+      newAlert(
+        "Failed",
+        error.response?.data?.message || "Failed to fetch sale",
+        "error"
+      );
+    } finally {
+      setConfirmation(false);
+    }
+  };
+
+  const newAlert = (title: string, msg: string, type?: any) => {
+    setType("error");
+    setMsgTitle("");
+    setMsg("");
+    setType(type);
+    setMsgTitle(title);
+    setMsg(msg);
+    setAlertOpen(true);
+  };
+
+  const newConfirmation = (title: string, msg: string, button: string) => {
+    setMsgTitle(title);
+    setMsg(msg);
+    setButton(button);
+    setConfirmation(true);
   };
 
   if (isItem) {
@@ -86,7 +123,13 @@ export default function ItemDetail() {
                       </button>
                       <button
                         className="bg-black rounded-full w-8 h-8 border-2 border-black p-1 cursor-pointer"
-                        onClick={deleteItem}
+                        onClick={() =>
+                          newConfirmation(
+                            "Are you sure?",
+                            "This action cannot be undone. All associated data will also be deleted.",
+                            "Delete Permanently"
+                          )
+                        }
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -145,6 +188,23 @@ export default function ItemDetail() {
           isOpen={isDialogOpen}
           onClose={() => setDialogOpen(false)}
           itemId={isItem.id}
+        />
+
+        <ConfirmationBox
+          isOpen={isConfirmation}
+          onClose={() => setConfirmation(false)}
+          message={isMsg}
+          title={isMsgTitle}
+          secondButton={isButton}
+          sbAction={deleteItem}
+        />
+
+        <DialogBox
+          isOpen={isAlertOpen}
+          onClose={() => setAlertOpen(false)}
+          message={isMsg}
+          title={isMsgTitle}
+          type={isType}
         />
       </>
     );

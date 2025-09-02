@@ -1,18 +1,34 @@
 import { useEffect, useState } from "react";
-import { Link, redirect, useLocation, useParams } from "react-router-dom";
+import {
+  Link,
+  redirect,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { api } from "../../../services/api";
 import arrow_left from "../../../assets/arrow_left.svg";
 import EditIcon from "../../../assets/edit.svg";
 import InventoryDetailBox from "../../../components/Inventory-Detail";
 import EditInventory from "../../../components/Edit-Inventory";
+import ConfirmationBox from "../../../components/Confirmation-Box";
+import DialogBox from "../../../components/DialogBox";
 
 export default function InventoryDetail() {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get("type");
   const [isInventory, setInventory] = useState<any>();
   const [isEdit, setEdit] = useState<boolean>();
+
+  const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
+  const [isConfirmation, setConfirmation] = useState<boolean>(false);
+  const [isMsg, setMsg] = useState<string>("");
+  const [isType, setType] = useState<"success" | "error">("error");
+  const [isMsgTitle, setMsgTitle] = useState<string>("");
+  const [isButton, setButton] = useState<string>("");
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -29,14 +45,46 @@ export default function InventoryDetail() {
   }, []);
 
   const deleteItem = async () => {
-    let query = ``;
-    if (type == "live") {
-      query = `/inventory/${Number(id)}`;
-    } else {
-      query = `/inventory/empty/${Number(id)}`;
+    try {
+      let query = ``;
+      if (type == "live") {
+        query = `/inventory/${Number(id)}`;
+      } else {
+        query = `/inventory/empty/${Number(id)}`;
+      }
+      const res = await api.delete(query);
+      newAlert("Success", res.data.message, "success");
+    } catch (error: any) {
+      newAlert(
+        "Failed",
+        error.response?.data?.message || "Failed to fetch sale",
+        "error"
+      );
+    } finally {
+      setConfirmation(false);
     }
-    const res = await api.delete(query);
-    redirect("/dashboard/store");
+  };
+
+  const handleCloseDialog = () => {
+    setAlertOpen(false);
+    navigate("/dashboard/store");
+  };
+
+  const newAlert = (title: string, msg: string, type?: any) => {
+    setType("error");
+    setMsgTitle("");
+    setMsg("");
+    setType(type);
+    setMsgTitle(title);
+    setMsg(msg);
+    setAlertOpen(true);
+  };
+
+  const newConfirmation = (title: string, msg: string, button: string) => {
+    setMsgTitle(title);
+    setMsg(msg);
+    setButton(button);
+    setConfirmation(true);
   };
 
   if (isInventory) {
@@ -91,7 +139,13 @@ export default function InventoryDetail() {
                     </button>
                     <button
                       className="bg-black rounded-full w-8 h-8 border-2 border-black p-1 cursor-pointer"
-                      onClick={deleteItem}
+                      onClick={() =>
+                        newConfirmation(
+                          "Are you sure?",
+                          "This action cannot be undone. All associated data will also be deleted.",
+                          "Delete Permanently"
+                        )
+                      }
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -112,6 +166,23 @@ export default function InventoryDetail() {
             </div>
           </div>
         </div>
+
+        <ConfirmationBox
+          isOpen={isConfirmation}
+          onClose={() => setConfirmation(false)}
+          message={isMsg}
+          title={isMsgTitle}
+          secondButton={isButton}
+          sbAction={deleteItem}
+        />
+
+        <DialogBox
+          isOpen={isAlertOpen}
+          onClose={handleCloseDialog}
+          message={isMsg}
+          title={isMsgTitle}
+          type={isType}
+        />
       </>
     );
   }
