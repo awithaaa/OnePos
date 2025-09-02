@@ -98,11 +98,6 @@ export default function CreateBill() {
     }
   };
 
-  const handleCloseDialog = () => {
-    setAlertOpen(false);
-    navigate("/dashboard");
-  };
-
   const newAlert = (title: string, msg: string, type?: any) => {
     setType(type);
     setMsgTitle(title);
@@ -335,7 +330,7 @@ export default function CreateBill() {
       />
       <DialogBox
         isOpen={isAlertOpen}
-        onClose={handleCloseDialog}
+        onClose={() => setAlertOpen(false)}
         message={isMsg}
         title={isMsgTitle}
         type={isType}
