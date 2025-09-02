@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Link,
-  redirect,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "../../../services/api";
 import arrow_left from "../../../assets/arrow_left.svg";
 import EditIcon from "../../../assets/edit.svg";

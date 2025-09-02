@@ -5,12 +5,21 @@ import EditIcon from "../../assets/edit.svg";
 import { api } from "../../services/api";
 import UserDetailBox from "../../components/User-Detail";
 import EditUser from "../../components/Edit-User";
+import ConfirmationBox from "../../components/Confirmation-Box";
+import DialogBox from "../../components/DialogBox";
 
 export default function UserDetail() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isUser, setUser] = useState<any>();
   const [isEdit, setEdit] = useState<boolean>();
+
+  const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
+  const [isConfirmation, setConfirmation] = useState<boolean>(false);
+  const [isMsg, setMsg] = useState<string>("");
+  const [isType, setType] = useState<"success" | "error">("error");
+  const [isMsgTitle, setMsgTitle] = useState<string>("");
+  const [isButton, setButton] = useState<string>("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -21,8 +30,35 @@ export default function UserDetail() {
   }, []);
 
   const deleteUser = async () => {
-    await api.delete(`/users/${id}`);
-    navigate("/dashboard/users");
+    try {
+      await api.delete(`/users/${id}`);
+      navigate("/dashboard/users");
+    } catch (error: any) {
+      newAlert(
+        "Failed",
+        error.response?.data?.message || "Failed to fetch sale",
+        "error"
+      );
+    } finally {
+      setConfirmation(false);
+    }
+  };
+
+  const newAlert = (title: string, msg: string, type?: any) => {
+    setType("error");
+    setMsgTitle("");
+    setMsg("");
+    setType(type);
+    setMsgTitle(title);
+    setMsg(msg);
+    setAlertOpen(true);
+  };
+
+  const newConfirmation = (title: string, msg: string, button: string) => {
+    setMsgTitle(title);
+    setMsg(msg);
+    setButton(button);
+    setConfirmation(true);
   };
 
   if (isUser) {
@@ -77,7 +113,13 @@ export default function UserDetail() {
                     </button>
                     <button
                       className="bg-black rounded-full w-8 h-8 border-2 border-black p-1 cursor-pointer"
-                      onClick={deleteUser}
+                      onClick={() =>
+                        newConfirmation(
+                          "Are you sure?",
+                          "This action cannot be undone. All associated data will also be deleted.",
+                          "Delete Permanently"
+                        )
+                      }
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -98,6 +140,23 @@ export default function UserDetail() {
             </div>
           </div>
         </div>
+
+        <ConfirmationBox
+          isOpen={isConfirmation}
+          onClose={() => setConfirmation(false)}
+          message={isMsg}
+          title={isMsgTitle}
+          secondButton={isButton}
+          sbAction={deleteUser}
+        />
+
+        <DialogBox
+          isOpen={isAlertOpen}
+          onClose={() => setAlertOpen(false)}
+          message={isMsg}
+          title={isMsgTitle}
+          type={isType}
+        />
       </>
     );
   }
