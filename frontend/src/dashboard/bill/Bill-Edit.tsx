@@ -4,6 +4,7 @@ import { api } from "../../services/api";
 import arrow_left from "../../assets/arrow_left.svg";
 import InfoIcon from "../../assets/arrow_right.svg";
 import DialogBox from "../../components/DialogBox";
+import ConfirmationBox from "../../components/Confirmation-Box";
 
 export default function BillEdit() {
   const { id } = useParams<{ id: string }>();
@@ -13,9 +14,11 @@ export default function BillEdit() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
+  const [isConfirmation, setConfirmation] = useState<boolean>(false);
   const [isMsg, setMsg] = useState<string>("");
   const [isType, setType] = useState<"success" | "error">("error");
   const [isMsgTitle, setMsgTitle] = useState<string>("");
+  const [isButton, setButton] = useState<string>("");
 
   const subtotal = isSaleItems.reduce(
     (sum, item) => sum + item.quantity * item.price,
@@ -61,11 +64,36 @@ export default function BillEdit() {
     fetchData();
   }, [id]);
 
+  const handleDelete = async () => {
+    try {
+      const res = await api.delete(`/sales/${id}`);
+      newAlert("Successful", res.data.message, "success");
+    } catch (error: any) {
+      newAlert(
+        "Failed",
+        error.response?.data?.message || "Failed to fetch sale",
+        "error"
+      );
+    } finally {
+      setConfirmation(false);
+    }
+  };
+
   const newAlert = (title: string, msg: string, type?: any) => {
+    setType("error");
+    setMsgTitle("");
+    setMsg("");
     setType(type);
     setMsgTitle(title);
     setMsg(msg);
     setAlertOpen(true);
+  };
+
+  const newConfirmation = (title: string, msg: string, button: string) => {
+    setMsgTitle(title);
+    setMsg(msg);
+    setButton(button);
+    setConfirmation(true);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -204,7 +232,16 @@ export default function BillEdit() {
                   <div>
                     <div className="flex justify-end mt-6">
                       <div className="flex gap-4">
-                        <button className="w-[100px] py-7 text-[#b60000] rounded-xl outline-2 flex flex-col justify-center items-center cursor-pointer">
+                        <button
+                          className="w-[100px] py-7 text-[#b60000] rounded-xl outline-2 flex flex-col justify-center items-center cursor-pointer"
+                          onClick={() =>
+                            newConfirmation(
+                              "Are you sure?",
+                              "This action cannot be undone. All associated data will also be deleted.",
+                              "Delete Permanently"
+                            )
+                          }
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             height="40px"
@@ -238,6 +275,15 @@ export default function BillEdit() {
           </div>
         </div>
       </div>
+
+      <ConfirmationBox
+        isOpen={isConfirmation}
+        onClose={() => setConfirmation(false)}
+        message={isMsg}
+        title={isMsgTitle}
+        secondButton={isButton}
+        sbAction={handleDelete}
+      />
 
       <DialogBox
         isOpen={isAlertOpen}

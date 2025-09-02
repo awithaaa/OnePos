@@ -163,6 +163,7 @@ export default function CreateBill() {
       setMsgTitle("Are you sure you want to go back?");
       setMsg("Any unsaved changes will be lost.");
       setAlertOpenBack(true);
+      return;
     }
     navigate("/dashboard");
   };
