@@ -83,11 +83,15 @@ export class SalesService {
   }
 
   async getSaleWithItems(id: number) {
-    const sale = await this.prisma.sale.findUnique({ where: { id: id } });
+    const sale = await this.prisma.sale.findUnique({
+      where: { id: id },
+      include: { user: { select: { firstName: true, lastName: true } } },
+    });
     if (!sale) throw new NotFoundException('Sale not found!');
 
     const saleItems = await this.prisma.saleItem.findMany({
       where: { saleId: sale.id },
+      include: { item: { select: { name: true } } },
     });
     return { sale, saleItems };
   }

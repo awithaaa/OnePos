@@ -49,7 +49,7 @@ export default function BillTable({ data }: Props) {
                 {item.userId || "-"}
               </td>
               <td className="border-r-0 border-gray-200 px-4 py-4 flex justify-center">
-                <Link to={`/dashboard/`}>
+                <Link to={`/dashboard/bill/${item.id}`}>
                   <img src={InfoIcon} alt="info" className="cursor-pointer" />
                 </Link>
               </td>
