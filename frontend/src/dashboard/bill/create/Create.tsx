@@ -7,6 +7,8 @@ import EditItemBill from "../../../components/Edit-Item-Bill";
 import PaymentDialogBox from "../../../components/Dialog/Payment-Dialog";
 import { api } from "../../../services/api";
 import DialogBox from "../../../components/DialogBox";
+import InvoiceA5 from "../../../components/Print/InvoiceA5";
+import { usePrint } from "../../../services/print";
 
 interface Items {
   id: number;
@@ -19,6 +21,7 @@ interface Items {
 }
 
 export default function CreateBill() {
+  const { printElement } = usePrint();
   const navigate = useNavigate();
   const [customer, setCustomer] = useState<string>("");
   const [items, setItems] = useState<Items[]>([]);
@@ -26,6 +29,9 @@ export default function CreateBill() {
   const [isEditIndex, setEditIndex] = useState<number>(0);
   const [isEditItem, setEditItem] = useState<Items | null>();
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [isSale, setSale] = useState<any>();
+  const [isSaleItems, setSaleItems] = useState<any[]>([]);
+  const [isPrint, setPrint] = useState(true);
 
   const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
   const [isAlertOpenBack, setAlertOpenBack] = useState<boolean>(false);
@@ -54,11 +60,12 @@ export default function CreateBill() {
   const tax = subtotal * 0.0;
   const total = subtotal + tax - discount;
 
-  const handlePaymentProcess = () => {
-    handleSaveBill(false);
+  const handlePaymentProcess = (print: boolean) => {
+    handleSaveBill(false, print);
+    setPrint(print);
   };
 
-  const handleSaveBill = async (draft: boolean) => {
+  const handleSaveBill = async (draft: boolean, print: boolean) => {
     if (items.length === 0) {
       newAlert("Error", "Items not found for bill!", "error");
       return;
@@ -90,7 +97,14 @@ export default function CreateBill() {
     }
 
     try {
-      await api.post("/sales", body);
+      const res = await api.post("/sales", body);
+      if (print) {
+        setSale(res.data.dt.sale);
+        setSaleItems(res.data.dt.saleItems);
+        console.log(isSale);
+        console.log(res.data);
+        printElement("invoice-a5", `Invoice #${isSale.id}`);
+      }
       newAlert("Bill created", "Bill created successfully!", "success");
     } catch (err: any) {
       console.error(err);
@@ -268,7 +282,7 @@ export default function CreateBill() {
                   <div className="flex gap-4">
                     <button
                       className="w-[125px] py-7 rounded-xl outline-2 flex flex-col justify-center items-center cursor-pointer"
-                      onClick={() => handleSaveBill(true)}
+                      onClick={() => handleSaveBill(true, false)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -315,6 +329,10 @@ export default function CreateBill() {
             {!isEdit && <AddItemBill handleItem={handleItem} />}
           </div>
         </div>
+      </div>
+
+      <div id="invoice-a5" className="hidden">
+        <InvoiceA5 sale={isSale} saleItems={isSaleItems} />
       </div>
 
       <PaymentDialogBox

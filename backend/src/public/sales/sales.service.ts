@@ -44,7 +44,11 @@ export class SalesService {
       });
     }
 
-    return { message: 'Sales add succesfully!' };
+    const dt = await this.getSaleWithItems(sale.id);
+
+    if (dt) {
+      return { message: 'Sales add succesfully!', dt };
+    }
   }
 
   async getSales(start?: number, size?: number) {

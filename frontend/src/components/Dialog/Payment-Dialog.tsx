@@ -5,6 +5,7 @@ import {
   DialogTitle,
   Radio,
   RadioGroup,
+  Switch,
   Transition,
   TransitionChild,
 } from "@headlessui/react";
@@ -12,7 +13,7 @@ import {
 interface DialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onProcess: () => void;
+  onProcess: (isPrint: boolean) => void;
   data: { subtotal: number; discount: number; tax: number; total: number };
 }
 
@@ -32,6 +33,7 @@ export default function PaymentDialogBox({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(payment[0]);
+  const [isPrint, setPrint] = useState(true);
 
   const handleBalance = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -42,7 +44,7 @@ export default function PaymentDialogBox({
   };
 
   const handleProcess = () => {
-    onProcess();
+    onProcess(isPrint);
     onClose();
   };
 
@@ -173,7 +175,28 @@ export default function PaymentDialogBox({
                   </div>
                 )}
 
-                <div className="mt-6 flex flex-col items-center">
+                <div className="mt-2 mb-4 flex px-2">
+                  <div className="flex items-center justify-center gap-4">
+                    <Switch
+                      checked={isPrint}
+                      onChange={setPrint}
+                      className={`${
+                        isPrint ? "bg-black" : "bg-white border border-black"
+                      } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                    >
+                      <span
+                        className={`${
+                          isPrint
+                            ? "translate-x-6 bg-white border border-black"
+                            : "translate-x-1 bg-black border border-black"
+                        } inline-block h-4 w-4 transform rounded-full transition`}
+                      />
+                    </Switch>
+                    <p className="font-semibold">Print the bill</p>
+                  </div>
+                </div>
+
+                <div className=" flex flex-col items-center">
                   <div className="mb-4 w-full h-0.5 bg-neutral-200"></div>
 
                   <button
