@@ -29,8 +29,6 @@ export default function CreateBill() {
   const [isEditIndex, setEditIndex] = useState<number>(0);
   const [isEditItem, setEditItem] = useState<Items | null>();
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [isSale, setSale] = useState<any>();
-  const [isSaleItems, setSaleItems] = useState<any[]>([]);
 
   const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
   const [isAlertOpenBack, setAlertOpenBack] = useState<boolean>(false);
@@ -97,9 +95,7 @@ export default function CreateBill() {
     try {
       const res = await api.post("/sales", body);
       if (print) {
-        setSale(res.data.dt.sale);
-        setSaleItems(res.data.dt.saleItems);
-        printElement("invoice-a5", `Invoice #${isSale.id}`);
+        window.electron.ipcRenderer.send("print-bill", res.data.sale.id);
       }
       newAlert("Bill created", "Bill created successfully!", "success");
     } catch (err: any) {
@@ -326,11 +322,6 @@ export default function CreateBill() {
           </div>
         </div>
       </div>
-
-      <div id="invoice-a5" className="hidden">
-        <InvoiceA5 sale={isSale} saleItems={isSaleItems} />
-      </div>
-
       <PaymentDialogBox
         isOpen={isDialogOpen}
         onClose={() => setDialogOpen(false)}

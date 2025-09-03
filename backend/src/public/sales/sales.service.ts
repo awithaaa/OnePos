@@ -44,7 +44,7 @@ export class SalesService {
       });
     }
 
-    return { message: 'Sales add succesfully!' };
+    return { message: 'Sales add succesfully!', sale };
   }
 
   async getSales(start?: number, size?: number) {

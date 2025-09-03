@@ -81,7 +81,6 @@ export default function BillEdit() {
   };
 
   const handlePrint = () => {
-    console.log("Sending print request for ID:", id);
     window.electron.ipcRenderer.send("print-bill", id);
   };
 
