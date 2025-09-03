@@ -7,8 +7,6 @@ import EditItemBill from "../../../components/Edit-Item-Bill";
 import PaymentDialogBox from "../../../components/Dialog/Payment-Dialog";
 import { api } from "../../../services/api";
 import DialogBox from "../../../components/DialogBox";
-import InvoiceA5 from "../../../components/Print/InvoiceA5";
-import { usePrint } from "../../../services/print";
 
 interface Items {
   id: number;
@@ -21,7 +19,6 @@ interface Items {
 }
 
 export default function CreateBill() {
-  const { printElement } = usePrint();
   const navigate = useNavigate();
   const [customer, setCustomer] = useState<string>("");
   const [items, setItems] = useState<Items[]>([]);

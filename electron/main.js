@@ -82,11 +82,12 @@ ipcMain.on("print-bill", (event, billId) => {
   printWindow.loadURL(printUrl);
 
   printWindow.webContents.once("did-finish-load", () => {
-    console.log("Page loaded, printing...");
-    printWindow.webContents.print({ silent: false }, (success, errorType) => {
-      if (!success) console.log("Print failed:", errorType);
-      printWindow.close();
-    });
+    setTimeout(() => {
+      printWindow.webContents.print({ silent: false }, (success, errorType) => {
+        if (!success) console.log("Print failed:", errorType);
+        printWindow.close();
+      });
+    }, 2000);
   });
 });
 
