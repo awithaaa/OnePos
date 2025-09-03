@@ -31,7 +31,6 @@ export default function CreateBill() {
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
   const [isSale, setSale] = useState<any>();
   const [isSaleItems, setSaleItems] = useState<any[]>([]);
-  const [isPrint, setPrint] = useState(true);
 
   const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
   const [isAlertOpenBack, setAlertOpenBack] = useState<boolean>(false);
@@ -62,7 +61,6 @@ export default function CreateBill() {
 
   const handlePaymentProcess = (print: boolean) => {
     handleSaveBill(false, print);
-    setPrint(print);
   };
 
   const handleSaveBill = async (draft: boolean, print: boolean) => {
@@ -101,8 +99,6 @@ export default function CreateBill() {
       if (print) {
         setSale(res.data.dt.sale);
         setSaleItems(res.data.dt.saleItems);
-        console.log(isSale);
-        console.log(res.data);
         printElement("invoice-a5", `Invoice #${isSale.id}`);
       }
       newAlert("Bill created", "Bill created successfully!", "success");

@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const { spawn } = require("child_process");
 const fetch = require("node-fetch");
@@ -38,8 +38,10 @@ function createMainWindow() {
         ? path.join(__dirname, "icon.icns")
         : path.join(__dirname, "icon.png"),
     webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
+      enableRemoteModule: false,
     },
   });
 
@@ -58,7 +60,37 @@ function createMainWindow() {
   });
 }
 
-async function waitForServer(url, timeout = 15000, interval = 500) {
+ipcMain.on("print-bill", (event, billId) => {
+  console.log("Received print request for ID:", billId);
+  const printWindow = new BrowserWindow({
+    width: 600,
+    height: 600,
+    show: true,
+    icon:
+      process.platform === "win32"
+        ? path.join(__dirname, "icon.ico")
+        : process.platform === "darwin"
+        ? path.join(__dirname, "icon.icns")
+        : path.join(__dirname, "icon.png"),
+    webPreferences: {
+      contextIsolation: true,
+    },
+  });
+
+  const printUrl = `http://localhost:5173/print-bill/${billId}`;
+  printWindow.removeMenu();
+  printWindow.loadURL(printUrl);
+
+  printWindow.webContents.once("did-finish-load", () => {
+    console.log("Page loaded, printing...");
+    printWindow.webContents.print({ silent: false }, (success, errorType) => {
+      if (!success) console.log("Print failed:", errorType);
+      printWindow.close();
+    });
+  });
+});
+
+async function waitForServer(url, timeout = 30000, interval = 500) {
   const start = Date.now();
 
   while (Date.now() - start < timeout) {

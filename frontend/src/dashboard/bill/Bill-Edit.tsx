@@ -80,6 +80,11 @@ export default function BillEdit() {
     }
   };
 
+  const handlePrint = () => {
+    console.log("Sending print request for ID:", id);
+    window.electron.ipcRenderer.send("print-bill", id);
+  };
+
   const newAlert = (title: string, msg: string, type?: any) => {
     setType("error");
     setMsgTitle("");
@@ -255,7 +260,10 @@ export default function BillEdit() {
                           <p>Delete</p>
                         </button>
 
-                        <button className="w-[125px] py-7 rounded-xl bg-black text-white flex flex-col justify-center items-center cursor-pointer">
+                        <button
+                          className="w-[125px] py-7 rounded-xl bg-black text-white flex flex-col justify-center items-center cursor-pointer"
+                          onClick={handlePrint}
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             height="40px"

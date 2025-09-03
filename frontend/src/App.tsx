@@ -13,6 +13,7 @@ import CreateBill from "./dashboard/bill/create/Create";
 import Bill from "./dashboard/bill/Bill";
 import UserDetail from "./dashboard/users/User";
 import BillEdit from "./dashboard/bill/Bill-Edit";
+import PrintBill from "./dashboard/bill/Print-Bill";
 
 function App() {
   return (
@@ -20,6 +21,14 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route
+            path="print-bill/:id"
+            element={
+              <ProtectedRoute>
+                <PrintBill />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/dashboard"
             element={
