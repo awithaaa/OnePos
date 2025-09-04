@@ -1,9 +1,9 @@
-// src/services/token.ts
 export const ACCESS_KEY = "access_token";
 export const REFRESH_KEY = "refresh_token";
 
-export const saveTokens = (access: string) => {
+export const saveTokens = (access: string, refresh: string) => {
   localStorage.setItem(ACCESS_KEY, access);
+  localStorage.setItem(REFRESH_KEY, refresh);
 };
 
 export const clearTokens = () => {

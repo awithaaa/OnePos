@@ -145,18 +145,7 @@ export class AuthService {
     }
   }
 
-  async logout(userId: number, receivedRefreshToken?: string) {
-    if (receivedRefreshToken) {
-      const tokens = await this.prisma.refreshToken.findMany({
-        where: { userId },
-      });
-      for (const t of tokens) {
-        if (await bcrypt.compare(receivedRefreshToken, t.tokenHash)) {
-          await this.prisma.refreshToken.delete({ where: { id: t.id } });
-        }
-      }
-    } else {
-      await this.prisma.refreshToken.deleteMany({ where: { userId } });
-    }
+  async logout(userId: number) {
+    await this.prisma.refreshToken.deleteMany({ where: { userId } });
   }
 }

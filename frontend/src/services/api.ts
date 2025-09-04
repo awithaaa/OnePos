@@ -1,5 +1,5 @@
-// api.ts
 import axios, { AxiosError, type AxiosInstance } from "axios";
+import { getRefreshToken, saveTokens } from "./token";
 
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
@@ -60,16 +60,17 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // 🔄 call refresh endpoint (cookie will be sent automatically)
         const res = await axios.post(
           "http://localhost:8000/auth/refresh",
-          {},
+          {
+            refreshToken: getRefreshToken(),
+          },
           { withCredentials: true }
         );
 
         const newAccessToken = res.data.access_token;
-        localStorage.setItem("access_token", newAccessToken);
-        console.log("refreshed");
+        const newRefreshToken = res.data.refresh_token;
+        saveTokens(newAccessToken, newRefreshToken);
 
         // update header for queued requests
         onRefreshed(newAccessToken);
@@ -80,7 +81,7 @@ api.interceptors.response.use(
       } catch (err) {
         console.error("Refresh token failed", err);
         localStorage.removeItem("access_token");
-        window.location.href = "/"; // redirect to login
+        // window.location.href = "/"; // redirect to login
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

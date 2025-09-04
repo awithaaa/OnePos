@@ -52,9 +52,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (email: string, password: string) => {
     try {
       const res = await apiWithOutRT.post("/auth/login", { email, password });
-      const { access_token } = res.data;
+      const { access_token, refresh_token } = res.data;
       if (!access_token) throw new Error("No access token from login");
-      saveTokens(access_token);
+      saveTokens(access_token, refresh_token);
       setAccessTokenState(access_token);
       await fetchUser();
       navigate("/dashboard");
@@ -67,11 +67,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const res = await api.post("/auth/logout");
     clearTokens();
     setAccessTokenState(null);
     setUser(null);
-    navigate("/login");
+    navigate("/");
   };
 
   return (
