@@ -12,6 +12,8 @@ export default function Users() {
   const [isFilters, setFilters] = useState<string>("");
   const [isCount, setCount] = useState<string>("");
   const [isPagination, setPagintaion] = useState<boolean>(true);
+  const [isPaginationNext, setPagintaionNext] = useState<boolean>(true);
+  const [isPaginationPrev, setPagintaionPrev] = useState<boolean>(true);
   const [isSearchType, setSearchType] = useState<string>("id");
 
   const fetctUsers = async () => {
@@ -22,8 +24,15 @@ export default function Users() {
       if (res.data.count <= 10) setPagintaion(false);
       if (res.data.count < isStart + 9) {
         end = res.data.count;
+        setPagintaionNext(false);
       } else {
         end = isStart + 9;
+        setPagintaionNext(true);
+      }
+      if (isStart == 1) {
+        setPagintaionPrev(false);
+      } else {
+        setPagintaionPrev(true);
       }
       setCount(`Showing ${isStart} to ${end} of ${res.data.count} results`);
     } catch (error) {
@@ -136,20 +145,24 @@ export default function Users() {
               </div>
               {isPagination && (
                 <div className="flex gap-4">
-                  <button
-                    type="button"
-                    className="px-6 py-2 bg-white text-black font-medium rounded-xl hover:bg-black hover:text-white outline-2  transition cursor-pointer"
-                    onClick={handlePrevious}
-                  >
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    className="px-6 py-2 bg-black text-white font-medium rounded-xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
-                    onClick={handleNext}
-                  >
-                    Next
-                  </button>
+                  {isPaginationPrev && (
+                    <button
+                      type="button"
+                      className="px-6 py-2 bg-white text-black font-medium rounded-xl hover:bg-black hover:text-white outline-2  transition cursor-pointer"
+                      onClick={handlePrevious}
+                    >
+                      Previous
+                    </button>
+                  )}
+                  {isPaginationNext && (
+                    <button
+                      type="button"
+                      className="px-6 py-2 bg-black text-white font-medium rounded-xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
+                      onClick={handleNext}
+                    >
+                      Next
+                    </button>
+                  )}
                 </div>
               )}
             </div>

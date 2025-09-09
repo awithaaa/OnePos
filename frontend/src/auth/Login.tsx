@@ -41,7 +41,7 @@ export default function Login() {
               <label className="ml-4">Email</label>
               <input
                 className="block w-80 rounded-4xl bg-white px-3.5 py-3 text-base text-gray-900 outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                type="password"
+                type="email"
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>

@@ -27,11 +27,11 @@ export default function Bill() {
       } else {
         end = isStart + 9;
         setPagintaionNext(true);
-        if (isStart === 1) {
-          setPagintaionPrev(false);
-        } else {
-          setPagintaionPrev(true);
-        }
+      }
+      if (isStart === 1) {
+        setPagintaionPrev(false);
+      } else {
+        setPagintaionPrev(true);
       }
       setCount(`Showing ${isStart} to ${end} of ${res.data.count} results`);
     } catch (error) {
