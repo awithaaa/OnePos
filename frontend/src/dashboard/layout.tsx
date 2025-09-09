@@ -85,7 +85,7 @@ export default function DashboardLayout() {
                   )}
             </div>
             <div className="flex flex-col gap-4">
-              {pathname[1] == "settings" ? (
+              {pathname[1] == "/users/me" ? (
                 <Link to={`/dashboard/settings`}>
                   <img
                     src={settingIcon}
@@ -94,7 +94,7 @@ export default function DashboardLayout() {
                   />
                 </Link>
               ) : (
-                <Link to={`/`}>
+                <Link to={`/dashboard/users/me`}>
                   <img
                     src={settingIcon}
                     alt="Settings"
