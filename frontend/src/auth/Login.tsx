@@ -4,7 +4,7 @@ import DialogBox from "../components/DialogBox";
 
 export default function Login() {
   const { login } = useAuth();
-  const [email, setEmail] = useState("avwithanage2006@gmail.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
@@ -37,11 +37,15 @@ export default function Login() {
         <div className="flex flex-col justify-center items-center bg-white w-[600px] h-[400px] rounded-xl p-4 shadow-lg">
           <h1 className="text-center font-bold text-3xl">Login</h1>
           <div className="flex flex-col items-center mt-3">
-            <div className="w-30 h-6 py-0.5 text-sm rounded-4xl bg-black text-white text-center cursor-pointer">
-              <p>arosha</p>
+            <div className="mt-4 flex flex-col gap-1">
+              <label className="ml-4">Email</label>
+              <input
+                className="block w-80 rounded-4xl bg-white px-3.5 py-3 text-base text-gray-900 outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+                type="password"
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
-
-            <div className="mt-10 flex flex-col gap-1">
+            <div className="mt-4  flex flex-col gap-1">
               <label className="ml-4">Password /Pin</label>
               <input
                 className="block w-80 rounded-4xl bg-white px-3.5 py-3 text-base text-gray-900 outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"

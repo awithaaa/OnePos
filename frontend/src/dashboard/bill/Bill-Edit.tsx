@@ -5,8 +5,10 @@ import arrow_left from "../../assets/arrow_left.svg";
 import InfoIcon from "../../assets/arrow_right.svg";
 import DialogBox from "../../components/DialogBox";
 import ConfirmationBox from "../../components/Confirmation-Box";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function BillEdit() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isSale, setSale] = useState<any>();
@@ -238,21 +240,29 @@ export default function BillEdit() {
                     <div className="flex justify-end mt-6">
                       <div className="flex gap-4">
                         <button
-                          className="w-[100px] py-7 text-[#b60000] rounded-xl outline-2 flex flex-col justify-center items-center cursor-pointer"
+                          className={`w-[100px] py-7 text-[#b60000] rounded-xl outline-2 flex flex-col justify-center items-center ${
+                            user?.role === "admin"
+                              ? "cursor-pointer"
+                              : "disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-300 disabled:hover:text-gray-500 opacity-50"
+                          }`}
                           onClick={() =>
+                            user?.role === "admin" &&
                             newConfirmation(
                               "Are you sure?",
                               "This action cannot be undone. All associated data will also be deleted.",
                               "Delete Permanently"
                             )
                           }
+                          disabled={user?.role !== "admin"}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             height="40px"
                             viewBox="0 -960 960 960"
                             width="40px"
-                            fill="#b60000"
+                            fill={
+                              user?.role === "admin" ? "#b60000" : "#6a7282"
+                            }
                           >
                             <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
                           </svg>
