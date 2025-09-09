@@ -6,22 +6,21 @@ import storeIcon from "../assets/store.svg";
 import paymentIcon from "../assets/credit-card.svg";
 import settingIcon from "../assets/settings.svg";
 import logoutIcon from "../assets/logout.svg";
-
 import logo from "/icon-bg.png";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function DashboardLayout() {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname.split("/dashboard");
 
   const sideBar = [
-    { name: "Home", img: homeIcon, to: "" },
-    { name: "Bill", img: billIcon, to: "/bill" },
-    { name: "Store", img: storeIcon, to: "/store" },
-    { name: "Payment", img: paymentIcon, to: "/payment" },
-    { name: "User", img: usersIcon, to: "/users" },
+    { name: "Home", img: homeIcon, to: "", admin: false },
+    { name: "Bill", img: billIcon, to: "/bill", admin: false },
+    { name: "Store", img: storeIcon, to: "/store", admin: false },
+    { name: "Payment", img: paymentIcon, to: "/payment", admin: true },
+    { name: "User", img: usersIcon, to: "/users", admin: true },
   ];
 
   const handleLogout = () => {
@@ -43,25 +42,47 @@ export default function DashboardLayout() {
               <img src={logo} alt="home" className="w-12" />
             </div>
             <div className="flex flex-col gap-4">
-              {sideBar.map((point, index: number) =>
-                pathname[1] == point.to ? (
-                  <Link key={index} to={`/dashboard${point.to}`}>
-                    <img
-                      src={point.img}
-                      alt={point.name}
-                      className="w-10 rounded-full p-2 bg-sky-300"
-                    />
-                  </Link>
-                ) : (
-                  <Link key={index} to={`/dashboard${point.to}`}>
-                    <img
-                      src={point.img}
-                      alt={point.name}
-                      className="w-10 rounded-full p-2 hover:bg-sky-200 transition"
-                    />
-                  </Link>
-                )
-              )}
+              {user?.role === "admin"
+                ? sideBar.map((point, index: number) =>
+                    pathname[1] == point.to ? (
+                      <Link key={index} to={`/dashboard${point.to}`}>
+                        <img
+                          src={point.img}
+                          alt={point.name}
+                          className="w-10 rounded-full p-2 bg-sky-300"
+                        />
+                      </Link>
+                    ) : (
+                      <Link key={index} to={`/dashboard${point.to}`}>
+                        <img
+                          src={point.img}
+                          alt={point.name}
+                          className="w-10 rounded-full p-2 hover:bg-sky-200 transition"
+                        />
+                      </Link>
+                    )
+                  )
+                : sideBar.map(
+                    (point, index: number) =>
+                      point.admin === false &&
+                      (pathname[1] == point.to ? (
+                        <Link key={index} to={`/dashboard${point.to}`}>
+                          <img
+                            src={point.img}
+                            alt={point.name}
+                            className="w-10 rounded-full p-2 bg-sky-300"
+                          />
+                        </Link>
+                      ) : (
+                        <Link key={index} to={`/dashboard${point.to}`}>
+                          <img
+                            src={point.img}
+                            alt={point.name}
+                            className="w-10 rounded-full p-2 hover:bg-sky-200 transition"
+                          />
+                        </Link>
+                      ))
+                  )}
             </div>
             <div className="flex flex-col gap-4">
               {pathname[1] == "settings" ? (
