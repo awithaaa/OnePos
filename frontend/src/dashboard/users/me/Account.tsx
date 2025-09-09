@@ -37,9 +37,13 @@ export default function MyAccount() {
 
   const handleSubmit = async () => {
     try {
-      const res = await api.patch(`/auth`, {});
-      setUser(res.data.item);
+      const res = await api.patch(`/auth/me`, {
+        firstName: isUser.firstName,
+        lastName: isUser.lastName,
+      });
+      setUser(res.data.user);
       newAlert("Account updated", res.data.message, "success");
+      setChange(false);
     } catch (error: any) {
       newAlert(error.response.data.error, error.response.data.message, "error");
     }
@@ -111,7 +115,7 @@ export default function MyAccount() {
                   <input
                     className="w-full text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
                     type="text"
-                    name="firstName"
+                    name="lastName"
                     value={isUser.lastName}
                     onChange={handleInputChange}
                   />

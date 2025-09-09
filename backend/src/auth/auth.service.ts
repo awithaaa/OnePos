@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersService } from 'src/public/users/users.service';
 import { UserRegisterDto } from './dto/register.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class AuthService {
@@ -143,6 +144,19 @@ export class AuthService {
     } catch (err) {
       throw new UnauthorizedException('Invalid refresh token');
     }
+  }
+
+  async updateProfile(email: string, updateProfile: UpdateProfileDto) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) throw new UnauthorizedException('Something went wrong!');
+
+    const newUser = await this.prisma.user.update({
+      where: { id: user.id },
+      data: updateProfile,
+    });
+
+    const { password, ...rest } = newUser;
+    return { message: 'Account updated succesfully!', user: rest };
   }
 
   async logout(userId: number) {

@@ -8,6 +8,7 @@ import {
   Get,
   Request,
   UnauthorizedException,
+  Patch,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -16,6 +17,7 @@ import { UserLoginDto } from './dto/login.dto';
 import { Public } from './decorator/public.decorator';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorator/roles.decorator';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -81,5 +83,11 @@ export class AuthController {
     await this.authService.logout(user.userId);
 
     return { ok: true };
+  }
+
+  @Patch('me')
+  @UseGuards(JwtAuthGuard)
+  async updateProfile(@Request() req, @Body() dto: UpdateProfileDto) {
+    return this.authService.updateProfile(req.user.email, dto);
   }
 }
