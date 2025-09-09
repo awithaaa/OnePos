@@ -1,26 +1,24 @@
 import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { Link } from "react-router-dom";
 import DialogBox from "../components/DialogBox";
-import ForgotPasswordPin from "../components/Forgot-Password-Pin";
 
-export default function Login() {
-  const { login } = useAuth();
-  const [email, setEmail] = useState("");
+export default function ResetPassword() {
+  const [confPassword, setConfPassword] = useState("");
   const [password, setPassword] = useState("");
 
-  const [isForgotOpen, setForgotOpen] = useState<boolean>(false);
   const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
   const [isMsg, setMsg] = useState<string>("");
   const [isType, setType] = useState<"success" | "error">("error");
   const [isMsgTitle, setMsgTitle] = useState<string>("");
 
-  const handleLogin = async () => {
+  const handleConfirm = async () => {
     try {
-      await login(email, password);
     } catch (error: any) {
       newAlert(
-        "Login error",
-        error?.response?.data?.message || error.message || "Login failed",
+        "Error",
+        error?.response?.data?.message ||
+          error.message ||
+          "Reset password failed",
         "error"
       );
     }
@@ -33,51 +31,37 @@ export default function Login() {
     setAlertOpen(true);
   };
 
-  const handleForgotPass = async () => {
-    if (email != "") {
-      setForgotOpen(true);
-      return;
-    }
-    newAlert("Error", "Please enter the email first.", "error");
-  };
-
   return (
     <>
       <div className="bg-[#e8eae6] min-h-screen flex justify-center items-center">
         <div className="flex flex-col justify-center items-center bg-white w-[600px] h-[400px] rounded-xl p-4 shadow-lg">
-          <h1 className="text-center font-bold text-3xl">Login</h1>
+          <h1 className="text-center font-bold text-3xl">Reset Password</h1>
           <div className="flex flex-col items-center mt-3">
             <div className="mt-4 flex flex-col gap-1">
-              <label className="ml-4">Email</label>
+              <label className="ml-4">New Password</label>
               <input
                 className="block w-80 rounded-4xl bg-white px-3.5 py-3 text-base text-gray-900 outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
                 type="email"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div className="mt-4  flex flex-col gap-1">
-              <label className="ml-4">Password /Pin</label>
+              <label className="ml-4">Confirm Password</label>
               <input
                 className="block w-80 rounded-4xl bg-white px-3.5 py-3 text-base text-gray-900 outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
                 type="password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setConfPassword(e.target.value)}
               />
             </div>
 
             <div className="mt-10">
               <button
                 type="button"
-                onClick={handleLogin}
+                onClick={handleConfirm}
                 className="w-64 py-3 bg-black text-white rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
               >
-                Login
+                Confirm
               </button>
-            </div>
-            <div
-              className="mt-2 text-sm text-center text-blue-500 cursor-pointer"
-              onClick={handleForgotPass}
-            >
-              Forgot Password ?
             </div>
           </div>
         </div>
@@ -88,10 +72,6 @@ export default function Login() {
         message={isMsg}
         title={isMsgTitle}
         type={isType}
-      />
-      <ForgotPasswordPin
-        isOpen={isForgotOpen}
-        onClose={() => setForgotOpen(false)}
       />
     </>
   );

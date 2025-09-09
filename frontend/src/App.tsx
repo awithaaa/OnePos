@@ -15,6 +15,7 @@ import UserDetail from "./dashboard/users/User";
 import BillEdit from "./dashboard/bill/Bill-Edit";
 import PrintBill from "./dashboard/bill/Print-Bill";
 import MyAccount from "./dashboard/users/me/Account";
+import ResetPassword from "./auth/ResetPassword";
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+
           <Route
             path="print-bill/:id"
             element={
