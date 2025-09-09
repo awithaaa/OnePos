@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, redirect, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { api } from "../../../services/api";
 import arrow_left from "../../../assets/arrow_left.svg";
 import EditItem from "../../../components/Edit-Item";
@@ -9,8 +9,10 @@ import InventoryTable from "../../../components/Table/Inventory-Table";
 import AddInventoryDialogBox from "../../../components/Dialog/Add-Inventory-Dialog";
 import ConfirmationBox from "../../../components/Confirmation-Box";
 import DialogBox from "../../../components/DialogBox";
+import { useAuth } from "../../../contexts/AuthContext";
 
 export default function ItemDetail() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isItem, setItem] = useState<any>();
@@ -40,7 +42,7 @@ export default function ItemDetail() {
 
   const deleteItem = async () => {
     try {
-      const res = await api.delete(`/items/${id}`);
+      await api.delete(`/items/${id}`);
       navigate("/dashboard/store");
     } catch (error: any) {
       newAlert(
@@ -116,27 +118,45 @@ export default function ItemDetail() {
                   <div>
                     <div className="flex justify-end gap-4">
                       <button
-                        className="bg-white rounded-full w-8 h-8 border-2 border-black p-1 cursor-pointer"
-                        onClick={() => setEdit(true)}
+                        className={`bg-white rounded-full w-8 h-8 border-2 p-1 ${
+                          user?.role === "admin"
+                            ? "cursor-pointer border-black"
+                            : "disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-300 disabled:hover:text-gray-500 opacity-50"
+                        }`}
+                        onClick={() => {
+                          if (user?.role === "admin") {
+                            setEdit(true);
+                          }
+                        }}
+                        disabled={user?.role !== "admin"}
                       >
                         <img src={EditIcon} alt="edit" className="w-5" />
                       </button>
                       <button
-                        className="bg-black rounded-full w-8 h-8 border-2 border-black p-1 cursor-pointer"
-                        onClick={() =>
-                          newConfirmation(
-                            "Are you sure?",
-                            "This action cannot be undone. All associated data will also be deleted.",
-                            "Delete Permanently"
-                          )
-                        }
+                        className={`rounded-full w-8 h-8 border-2 p-1 
+                          ${
+                            user?.role === "admin"
+                              ? "bg-black border-black cursor-pointer"
+                              : "bg-gray-300 text-gray-500 cursor-not-allowed opacity-50"
+                          }
+                        `}
+                        onClick={() => {
+                          if (user?.role === "admin") {
+                            newConfirmation(
+                              "Are you sure?",
+                              "This action cannot be undone. All associated data will also be deleted.",
+                              "Delete Permanently"
+                            );
+                          }
+                        }}
+                        disabled={user?.role !== "admin"}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           height="20px"
                           viewBox="0 -960 960 960"
                           width="20px"
-                          fill="#FFFFFF"
+                          fill={user?.role === "admin" ? "#FFFFFF" : "#6a7282"}
                         >
                           <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
                         </svg>
@@ -155,15 +175,24 @@ export default function ItemDetail() {
                 <div className="w-full flex justify-between mt-10 mb-4">
                   <h1 className="text-2xl font-bold">Live Inventory</h1>
                   <button
-                    className="bg-black rounded-full w-8 h-8 border-2 border-black p-1 cursor-pointer"
-                    onClick={() => setDialogOpen(true)}
+                    className={`rounded-full w-8 h-8 border-2 p-1 ${
+                      user?.role === "admin"
+                        ? "bg-black border-black cursor-pointer"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed opacity-50"
+                    }`}
+                    onClick={() => {
+                      if (user?.role === "admin") {
+                        setDialogOpen(true);
+                      }
+                    }}
+                    disabled={user?.role !== "admin"}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       height="20px"
                       viewBox="0 -960 960 960"
                       width="20px"
-                      fill="#FFFFFF"
+                      fill={user?.role === "admin" ? "#FFFFFF" : "#6a7282"}
                     >
                       <path d="M434.5-434.5H191.87v-91H434.5v-242.63h91v242.63h242.63v91H525.5v242.63h-91V-434.5Z" />
                     </svg>
