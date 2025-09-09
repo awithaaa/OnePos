@@ -35,6 +35,7 @@ export default function AddItemBill({ handleItem }: Props) {
       try {
         if (isSearchType === "suk") {
           const res = await api.get(`/items?suk=${isId}`);
+          setId(res.data.item.id);
           setName(res.data.item.name);
           setBrand(res.data.item.brand);
           setUnitPrice(res.data.item.salePrice);
@@ -67,7 +68,7 @@ export default function AddItemBill({ handleItem }: Props) {
   const handleAddItem = async () => {
     if (isName) {
       try {
-        const res = await api.get(
+        await api.get(
           `/items/checkqty?id=${isId}&qty=${isQuantity}&type=${isSearchType}`
         );
         handleItem({
