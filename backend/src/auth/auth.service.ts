@@ -227,7 +227,7 @@ export class AuthService {
         secret: process.env.JWT_FORGOT_SECRET,
       });
 
-      if (tok.accept)
+      if (!tok.acceptBy)
         throw new UnauthorizedException('Invalid token. Please try again.');
 
       if (tok.pin && tok.pin == pin) {
@@ -238,9 +238,9 @@ export class AuthService {
         return { message: 'Session accepted successfully!', code: 111 };
       }
 
-      return { message: 'Invalid pin. Please try again.' };
-    } catch (error) {
-      throw new UnauthorizedException('Token has been expired!');
+      throw new UnauthorizedException('Invalid pin. Please try again.');
+    } catch (error: any) {
+      throw new UnauthorizedException(error);
     }
   }
 
