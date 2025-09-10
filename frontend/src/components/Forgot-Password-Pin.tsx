@@ -40,11 +40,36 @@ export default function ForgotPasswordPin({
       const res = await apiWithOutRT.post("/auth/forgot-token", {
         email: email,
       });
+      console.log(res.data);
       setToken(res.data.jwtToken);
       setLoading(false);
     } catch (err: any) {
       newAlert("Error", err.response.data.message, "error");
     }
+  };
+
+  const checkPin = async () => {
+    if (isPin.length === 6) {
+      setLoading(true);
+      try {
+        const res = await apiWithOutRT.post("/auth/check-forgot-token", {
+          token: isToken,
+          pin: isPin,
+        });
+        console.log(res.data);
+        if (res.data.code === 111) navigate("/reset-password");
+      } catch (err: any) {
+        newAlert("Error", err.response.data.message, "error");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+    newAlert(
+      "Error",
+      "Invalid pin number. Pin must contain 6 digits.",
+      "error"
+    );
   };
 
   const newAlert = (title: string, msg: string, type?: any) => {
@@ -122,7 +147,7 @@ export default function ForgotPasswordPin({
                       {!sendPin && (
                         <button
                           type="button"
-                          onClick={() => navigate("/reset-password")}
+                          onClick={checkPin}
                           className="inline-flex w-full justify-center rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-neutral-900 sm:ml-3 sm:w-auto"
                         >
                           Confirm
