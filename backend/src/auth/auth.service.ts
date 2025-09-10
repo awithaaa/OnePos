@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -161,5 +165,109 @@ export class AuthService {
 
   async logout(userId: number) {
     await this.prisma.refreshToken.deleteMany({ where: { userId } });
+  }
+
+  async createForgotPasswordSession(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email: email } });
+    if (!user)
+      throw new NotFoundException('Account does not exsist for this email!');
+
+    const jwtToken = this.jwtService.sign(
+      { user: email, exp: '1m' },
+      {
+        secret: process.env.JWT_FORGOT_SECRET,
+        expiresIn: process.env.JWT_FORGOT_EXPIRES_IN,
+      },
+    );
+
+    const token = this.prisma.passwordToken.create({
+      data: {
+        token: jwtToken,
+        userId: user.id,
+      },
+    });
+
+    return jwtToken;
+  }
+
+  async approveForgotPasswordSession(id: string, acceptId: number) {
+    const token = await this.prisma.passwordToken.findUnique({
+      where: { id: id },
+    });
+    if (!token) throw new NotFoundException('Token does not exsist!');
+
+    const pin = Math.floor(100000 + Math.random() * 900000).toString();
+
+    try {
+      const payload = this.jwtService.verify(token.token, {
+        secret: process.env.JWT_FORGOT_SECRET,
+      });
+      const acceptToken = await this.prisma.passwordToken.update({
+        where: { id: token.id },
+        data: { pin: pin, acceptBy: acceptId },
+      });
+
+      return { message: 'Session accepted successfully!', acceptToken };
+    } catch (error) {
+      throw new UnauthorizedException('Token has been expired!');
+    }
+  }
+
+  async checkForgotPasswordPin(token: string, pin: string) {
+    const tok = await this.prisma.passwordToken.findFirst({
+      where: { token: token },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    if (!tok) throw new NotFoundException('Token does not exsist!');
+
+    try {
+      const payload = this.jwtService.verify(tok.token, {
+        secret: process.env.JWT_FORGOT_SECRET,
+      });
+
+      if (tok.pin && tok.pin == pin) {
+        const acceptToken = await this.prisma.passwordToken.update({
+          where: { id: tok.id },
+          data: { accept: true },
+        });
+        return { message: 'Session accepted successfully!', code: 111 };
+      }
+
+      return { message: 'Invalid pin. Please try again.' };
+    } catch (error) {
+      throw new UnauthorizedException('Token has been expired!');
+    }
+  }
+
+  async resetPassword(token: string, password: string) {
+    const tok = await this.prisma.passwordToken.findFirst({
+      where: { token: token },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    if (!tok) throw new NotFoundException('Token does not exsist!');
+
+    try {
+      const payload = this.jwtService.verify(tok.token, {
+        secret: process.env.JWT_FORGOT_SECRET,
+      });
+
+      if (tok.accept !== true)
+        throw new UnauthorizedException(
+          'Invalid token. You cannot reset your password right now!',
+        );
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      return this.prisma.user.update({
+        where: { email: payload.user },
+        data: { password: hashedPassword },
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Token has been expired!');
+    }
   }
 }

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import DialogBox from "../components/DialogBox";
 
 export default function ResetPassword() {

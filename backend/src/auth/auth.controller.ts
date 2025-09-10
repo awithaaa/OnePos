@@ -90,4 +90,35 @@ export class AuthController {
   async updateProfile(@Request() req, @Body() dto: UpdateProfileDto) {
     return this.authService.updateProfile(req.user.email, dto);
   }
+
+  @Post('/forgot-token')
+  @Public()
+  async createForgotPasswordSession(@Body('email') email: string) {
+    return this.authService.createForgotPasswordSession(email);
+  }
+
+  @Post('/check-forgot-token')
+  @Public()
+  async checkForgotPasswordPin(
+    @Body('token') token: string,
+    @Body('pin') pin: string,
+  ) {
+    return this.authService.checkForgotPasswordPin(token, pin);
+  }
+
+  @Patch('/forgot-token')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async approveForgotPasswordSession(@Body('id') id: string, @Request() req) {
+    return this.authService.approveForgotPasswordSession(id, req.user.userId);
+  }
+
+  @Post('/reset-password')
+  @Public()
+  async resetPassword(
+    @Body('token') email: string,
+    @Body('password') password: string,
+  ) {
+    return this.authService.resetPassword(email, password);
+  }
 }
