@@ -92,6 +92,7 @@ export default function Login() {
       <ForgotPasswordPin
         isOpen={isForgotOpen}
         onClose={() => setForgotOpen(false)}
+        email={email}
       />
     </>
   );
