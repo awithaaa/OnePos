@@ -173,21 +173,21 @@ export class AuthService {
       throw new NotFoundException('Account does not exsist for this email!');
 
     const jwtToken = this.jwtService.sign(
-      { user: email, exp: '1m' },
+      { user: email, expIn: '1m' },
       {
         secret: process.env.JWT_FORGOT_SECRET,
         expiresIn: process.env.JWT_FORGOT_EXPIRES_IN,
       },
     );
 
-    const token = this.prisma.passwordToken.create({
+    const token = await this.prisma.passwordToken.create({
       data: {
         token: jwtToken,
         userId: user.id,
       },
     });
 
-    return jwtToken;
+    return { jwtToken, token: token.id };
   }
 
   async approveForgotPasswordSession(id: string, acceptId: number) {
@@ -227,6 +227,9 @@ export class AuthService {
         secret: process.env.JWT_FORGOT_SECRET,
       });
 
+      if (tok.accept)
+        throw new UnauthorizedException('Invalid token. Please try again.');
+
       if (tok.pin && tok.pin == pin) {
         const acceptToken = await this.prisma.passwordToken.update({
           where: { id: tok.id },
@@ -241,7 +244,7 @@ export class AuthService {
     }
   }
 
-  async resetPassword(token: string, password: string) {
+  async resetPassword(token: string, pass: string) {
     const tok = await this.prisma.passwordToken.findFirst({
       where: { token: token },
       orderBy: {
@@ -260,12 +263,14 @@ export class AuthService {
           'Invalid token. You cannot reset your password right now!',
         );
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(pass, 10);
 
-      return this.prisma.user.update({
+      const user = await this.prisma.user.update({
         where: { email: payload.user },
         data: { password: hashedPassword },
       });
+      const { password, ...rest } = user;
+      return { user: rest };
     } catch (error) {
       throw new UnauthorizedException('Token has been expired!');
     }
