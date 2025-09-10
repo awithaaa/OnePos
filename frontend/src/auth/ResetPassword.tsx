@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DialogBox from "../components/DialogBox";
+import { useLocation, useNavigate } from "react-router-dom";
+import { apiWithOutRT } from "../services/api";
 
 export default function ResetPassword() {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get("t");
+  const navigate = useNavigate();
+  const [isLoading, setLoading] = useState<boolean>(false);
   const [confPassword, setConfPassword] = useState("");
   const [password, setPassword] = useState("");
 
@@ -10,16 +17,44 @@ export default function ResetPassword() {
   const [isType, setType] = useState<"success" | "error">("error");
   const [isMsgTitle, setMsgTitle] = useState<string>("");
 
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        setLoading(true);
+        const res = await apiWithOutRT.post("/auth/check-forgot-token", {
+          token: token,
+        });
+        if (res.data.code === 111) setLoading(false);
+      } catch (error: any) {
+        newAlert(
+          "Error",
+          error?.response?.data?.message ||
+            error.message ||
+            "Reset password failed",
+          "error"
+        );
+      }
+    };
+    checkToken();
+  }, []);
+
   const handleConfirm = async () => {
-    try {
-    } catch (error: any) {
-      newAlert(
-        "Error",
-        error?.response?.data?.message ||
-          error.message ||
-          "Reset password failed",
-        "error"
-      );
+    if (password === confPassword) {
+      try {
+        const res = await apiWithOutRT.post("/auth/reset-password", {
+          token: token,
+          password: password,
+        });
+        newAlert("Success", "Password reset successfully", "success");
+      } catch (error: any) {
+        newAlert(
+          "Error",
+          error?.response?.data?.message ||
+            error.message ||
+            "Reset password failed",
+          "error"
+        );
+      }
     }
   };
 
@@ -29,6 +64,25 @@ export default function ResetPassword() {
     setMsg(msg);
     setAlertOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <div className="w-full min-h-screen flex justify-center items-center">
+          Loading...
+        </div>
+        <DialogBox
+          isOpen={isAlertOpen}
+          onClose={() => setAlertOpen(false)}
+          message={isMsg}
+          title={isMsgTitle}
+          type={isType}
+          secondButton="Go back"
+          sbAction={() => navigate("/")}
+        />
+      </>
+    );
+  }
 
   return (
     <>

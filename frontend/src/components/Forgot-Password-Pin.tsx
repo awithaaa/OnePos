@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -57,7 +57,7 @@ export default function ForgotPasswordPin({
           pin: isPin,
         });
         console.log(res.data);
-        if (res.data.code === 111) navigate("/reset-password");
+        if (res.data.code === 111) navigate(`/reset-password?t=${isToken}`);
       } catch (err: any) {
         newAlert("Error", err.response.data.message, "error");
       } finally {
