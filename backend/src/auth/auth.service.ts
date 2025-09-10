@@ -227,7 +227,7 @@ export class AuthService {
         secret: process.env.JWT_FORGOT_SECRET,
       });
 
-      if (!tok.acceptBy)
+      if (tok.acceptBy)
         throw new UnauthorizedException('Invalid token. Please try again.');
 
       if (tok.pin && tok.pin == pin) {
@@ -240,6 +240,37 @@ export class AuthService {
 
       throw new UnauthorizedException('Invalid pin. Please try again.');
     } catch (error: any) {
+      if (error.name === 'TokenExpiredError')
+        throw new UnauthorizedException('Token has been expired!');
+      throw new UnauthorizedException(error);
+    }
+  }
+
+  async checkForgotPasswordToken(token: string) {
+    const tok = await this.prisma.passwordToken.findFirst({
+      where: { token: token },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    if (!tok) throw new NotFoundException('Token does not exsist!');
+
+    try {
+      const payload = this.jwtService.verify(tok.token, {
+        secret: process.env.JWT_FORGOT_SECRET,
+      });
+
+      if (!tok.acceptBy)
+        throw new UnauthorizedException('Invalid token. Please try again.');
+
+      if (tok.userId) {
+        throw new UnauthorizedException('Invalid token. Please try again.');
+      }
+
+      return { code: 111 };
+    } catch (error: any) {
+      if (error.name === 'TokenExpiredError')
+        throw new UnauthorizedException('Token has been expired!');
       throw new UnauthorizedException(error);
     }
   }
@@ -272,7 +303,9 @@ export class AuthService {
       const { password, ...rest } = user;
       return { user: rest };
     } catch (error) {
-      throw new UnauthorizedException('Token has been expired!');
+      if (error.name === 'TokenExpiredError')
+        throw new UnauthorizedException('Token has been expired!');
+      throw new UnauthorizedException(error);
     }
   }
 }

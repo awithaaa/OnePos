@@ -113,12 +113,18 @@ export class AuthController {
     return this.authService.approveForgotPasswordSession(id, req.user.userId);
   }
 
+  @Get('/check-forgot-token')
+  @Public()
+  async checkForgotPasswordToken(@Body('token') token: string) {
+    return this.authService.checkForgotPasswordToken(token);
+  }
+
   @Post('/reset-password')
   @Public()
   async resetPassword(
-    @Body('token') email: string,
+    @Body('token') token: string,
     @Body('password') password: string,
   ) {
-    return this.authService.resetPassword(email, password);
+    return this.authService.resetPassword(token, password);
   }
 }
