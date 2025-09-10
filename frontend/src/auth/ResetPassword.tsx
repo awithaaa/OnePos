@@ -21,9 +21,9 @@ export default function ResetPassword() {
     const checkToken = async () => {
       try {
         setLoading(true);
-        const res = await apiWithOutRT.post("/auth/check-forgot-token", {
-          token: token,
-        });
+        const res = await apiWithOutRT.get(
+          `/auth/check-forgot-token?t=${token}`
+        );
         if (res.data.code === 111) setLoading(false);
       } catch (error: any) {
         newAlert(
@@ -41,7 +41,7 @@ export default function ResetPassword() {
   const handleConfirm = async () => {
     if (password === confPassword) {
       try {
-        const res = await apiWithOutRT.post("/auth/reset-password", {
+        await apiWithOutRT.post("/auth/reset-password", {
           token: token,
           password: password,
         });

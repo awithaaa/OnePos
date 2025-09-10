@@ -9,6 +9,7 @@ import {
   Request,
   UnauthorizedException,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -115,7 +116,7 @@ export class AuthController {
 
   @Get('/check-forgot-token')
   @Public()
-  async checkForgotPasswordToken(@Body('token') token: string) {
+  async checkForgotPasswordToken(@Query('t') token: string) {
     return this.authService.checkForgotPasswordToken(token);
   }
 

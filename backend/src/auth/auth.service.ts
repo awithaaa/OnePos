@@ -227,7 +227,7 @@ export class AuthService {
         secret: process.env.JWT_FORGOT_SECRET,
       });
 
-      if (tok.acceptBy)
+      if (!tok.acceptBy)
         throw new UnauthorizedException('Invalid token. Please try again.');
 
       if (tok.pin && tok.pin == pin) {
@@ -263,7 +263,7 @@ export class AuthService {
       if (!tok.acceptBy)
         throw new UnauthorizedException('Invalid token. Please try again.');
 
-      if (tok.userId) {
+      if (tok.userId == null) {
         throw new UnauthorizedException('Invalid token. Please try again.');
       }
 
