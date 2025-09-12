@@ -13,6 +13,9 @@ export default function UserDetail() {
   const { id } = useParams<{ id: string }>();
   const [isUser, setUser] = useState<any>();
   const [isEdit, setEdit] = useState<boolean>();
+  const [isPassReq, setPassReq] = useState<any>();
+  const [isPinShow, setPinShow] = useState<boolean>(false);
+  const [isChange, setChange] = useState<boolean>(false);
 
   const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
   const [isConfirmation, setConfirmation] = useState<boolean>(false);
@@ -26,8 +29,28 @@ export default function UserDetail() {
       const res = await api.get(`/users?id=${id}`);
       setUser(res.data.user);
     };
+
+    const fetchPR = async () => {
+      try {
+        const res = await api.get(`/users/password-request?id=${id}`);
+        setPassReq(res.data);
+        const createdDate = new Date(res.data.createdAt);
+        const updatedDate = new Date(res.data.updatedAt);
+        setPassReq((prev: any) => ({
+          ...prev,
+          ["createdDate"]: createdDate.toLocaleDateString(),
+        }));
+        setPassReq((prev: any) => ({
+          ...prev,
+          ["createdTime"]: createdDate.toLocaleTimeString(),
+        }));
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
+    fetchPR();
     fetchUser();
-  }, []);
+  }, [isChange]);
 
   const deleteUser = async () => {
     try {
@@ -41,6 +64,22 @@ export default function UserDetail() {
       );
     } finally {
       setConfirmation(false);
+    }
+  };
+
+  const handleAcceptReq = async () => {
+    try {
+      const res = await api.patch(`/auth/forgot-token`, {
+        id: isPassReq.id,
+      });
+      setPassReq(res.data.acceptToken);
+      setChange(!isChange);
+    } catch (error: any) {
+      newAlert(
+        "Failed",
+        error.response?.data?.message || "Failed to fetch sale",
+        "error"
+      );
     }
   };
 
@@ -74,7 +113,6 @@ export default function UserDetail() {
             </Link>
             <h1 className="text-2xl font-bold">User Details</h1>
           </div>
-
           <div className="flex justify-center mt-10">
             <div className="bg-white p-6 rounded-xl">
               {isEdit && (
@@ -137,6 +175,66 @@ export default function UserDetail() {
                   <UserDetailBox user={isUser} />
                 </div>
               )}
+            </div>
+          </div>
+
+          <div className="flex justify-center mt-10">
+            <div className="w-[592px]">
+              <h3 className="font-bold text-lg mb-5">
+                Forgot Password Requests
+              </h3>
+
+              <div>
+                {isPassReq && (
+                  <div className="w-full flex justify-between items-center bg-white p-4 rounded-xl shadow">
+                    <div>
+                      <p>{isPassReq.id}</p>
+                      <p>
+                        Date: {isPassReq.createdDate} Time:{" "}
+                        {isPassReq.createdTime}
+                      </p>
+                    </div>
+                    {isPassReq.acceptBy ? (
+                      isPinShow ? (
+                        <div onClick={() => setPinShow(false)}>
+                          Pin:{" "}
+                          <span className="font-semibold cursor-pointer">
+                            {isPassReq.pin}
+                          </span>
+                        </div>
+                      ) : (
+                        <div
+                          className="text-neutral-500 underline cursor-pointer"
+                          onClick={() => setPinShow(true)}
+                        >
+                          Show Pin
+                        </div>
+                      )
+                    ) : (
+                      <div className="flex gap-4">
+                        <button
+                          className="rounded-full bg-green-300 p-1.5 cursor-pointer"
+                          onClick={handleAcceptReq}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="24px"
+                            viewBox="0 -960 960 960"
+                            width="24px"
+                            fill="#016630"
+                          >
+                            <path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {!isPassReq && (
+                  <div className="w-full text-center">Not found!</div>
+                )}
+              </div>
             </div>
           </div>
         </div>

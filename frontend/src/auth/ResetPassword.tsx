@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DialogBox from "../components/DialogBox";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { apiWithOutRT } from "../services/api";
 
 export default function ResetPassword() {
@@ -94,7 +94,7 @@ export default function ResetPassword() {
               <label className="ml-4">New Password</label>
               <input
                 className="block w-80 rounded-4xl bg-white px-3.5 py-3 text-base text-gray-900 outline-2 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
-                type="email"
+                type="password"
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
@@ -116,6 +116,12 @@ export default function ResetPassword() {
                 Confirm
               </button>
             </div>
+            <Link
+              to={"/"}
+              className="mt-2 text-sm text-center text-blue-500 cursor-pointer"
+            >
+              Go back to Login
+            </Link>
           </div>
         </div>
       </div>

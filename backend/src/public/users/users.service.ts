@@ -118,14 +118,14 @@ export class UsersService {
   }
 
   async getLatestPasswordReq(id: number) {
-    const tok = await this.prisma.passwordToken.findFirst({
+    const tok = await this.prisma.passwordToken.findMany({
       where: { userId: id },
       orderBy: {
         id: 'desc',
       },
     });
-    if (!tok) throw new NotFoundException('Token does not exsist!');
+    if (tok.length === 0) throw new NotFoundException('Token does not exsist!');
 
-    return tok;
+    return tok[0];
   }
 }
