@@ -35,7 +35,7 @@ export default function UserDetail() {
         const res = await api.get(`/users/password-request?id=${id}`);
         setPassReq(res.data);
         const createdDate = new Date(res.data.createdAt);
-        const updatedDate = new Date(res.data.updatedAt);
+        // const updatedDate = new Date(res.data.updatedAt);
         setPassReq((prev: any) => ({
           ...prev,
           ["createdDate"]: createdDate.toLocaleDateString(),

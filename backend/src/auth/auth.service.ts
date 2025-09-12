@@ -9,6 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersService } from 'src/public/users/users.service';
 import { UserRegisterDto } from './dto/register.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -307,5 +308,21 @@ export class AuthService {
         throw new UnauthorizedException('Token has been expired!');
       throw new UnauthorizedException(error);
     }
+  }
+
+  async changePassword(data: ChangePasswordDto, id: number) {
+    const user = await this.prisma.user.findUnique({ where: { id: id } });
+    if (!user) throw new UnauthorizedException('Invalid user');
+
+    const match = await bcrypt.compare(data.password, user.password);
+    if (!match) throw new UnauthorizedException('Invalid credentials');
+
+    const hashedPassword = await bcrypt.hash(data.newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: id },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Credientials reset successfully!' };
   }
 }
