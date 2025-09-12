@@ -52,4 +52,11 @@ export class UsersController {
   async deleteUserById(@Param('id') id: number) {
     return this.usersService.deleteUserById(Number(id));
   }
+
+  @Get('/password-request')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async getLatestPasswordReq(@Query('id') id: number) {
+    return this.usersService.getLatestPasswordReq(Number(id));
+  }
 }

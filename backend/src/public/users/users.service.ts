@@ -116,4 +116,16 @@ export class UsersService {
     await this.prisma.user.delete({ where: { id: id } });
     return { message: 'User deleted succesfully!' };
   }
+
+  async getLatestPasswordReq(id: number) {
+    const tok = await this.prisma.passwordToken.findFirst({
+      where: { userId: id },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    if (!tok) throw new NotFoundException('Token does not exsist!');
+
+    return tok;
+  }
 }
