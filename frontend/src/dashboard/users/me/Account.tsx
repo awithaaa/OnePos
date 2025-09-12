@@ -8,6 +8,8 @@ export default function MyAccount() {
   const [isUser, setUser] = useState<any>();
   const [isLoading, setLoading] = useState<boolean>();
   const [isChange, setChange] = useState<boolean>();
+  const [isChangePass, setChangePass] = useState<boolean>();
+  const [isPassword, setPassword] = useState<any>();
 
   const [isAlertOpen, setAlertOpen] = useState<boolean>(false);
   const [isMsg, setMsg] = useState<string>("");
@@ -35,6 +37,17 @@ export default function MyAccount() {
     setChange(true);
   };
 
+  const handleInputPassChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setPassword((prev: any) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setChangePass(true);
+  };
+
   const handleSubmit = async () => {
     try {
       const res = await api.patch(`/auth/me`, {
@@ -44,6 +57,23 @@ export default function MyAccount() {
       setUser(res.data.user);
       newAlert("Account updated", res.data.message, "success");
       setChange(false);
+    } catch (error: any) {
+      newAlert(error.response.data.error, error.response.data.message, "error");
+    }
+  };
+
+  const handlePassword = async () => {
+    if (isPassword.newPassword !== isPassword.confirmPassword) {
+      newAlert("Password update error", "Password are not match.", "error");
+      return;
+    }
+    try {
+      const res = await api.patch(`/auth/change-password`, {
+        password: isPassword.password,
+        newPassword: isPassword.newPassword,
+      });
+      newAlert("Account updated", res.data.message, "success");
+      setChangePass(false);
     } catch (error: any) {
       newAlert(error.response.data.error, error.response.data.message, "error");
     }
@@ -83,7 +113,7 @@ export default function MyAccount() {
           <div className="flex justify-center mt-10">
             <div className="bg-white w-[800px] p-6 rounded-xl">
               <div className="mt-6">
-                <h2 className="text-base/7 font-semibold text-gray-900 mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">
                   Personal Information
                 </h2>
                 <div>
@@ -153,6 +183,81 @@ export default function MyAccount() {
                     type="button"
                     className="w-64 py-2.5 bg-black text-white font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
                     onClick={handleSubmit}
+                  >
+                    Update
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-center mt-10">
+            <div className="bg-white w-[800px] p-6 rounded-xl">
+              <div className="mt-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                  Credientials Information
+                </h2>
+                <div>
+                  <label className="block font-semibold text-base text-gray-900">
+                    Current Password
+                  </label>
+                  <input
+                    className="mt-2 w-full text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+                    type="password"
+                    name="password"
+                    value={isPassword?.password}
+                    onChange={handleInputPassChange}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-8 mt-4 ">
+                <div className="flex flex-col w-full gap-2">
+                  <label className="font-semibold text-base">
+                    New Password
+                  </label>
+                  <input
+                    className="w-full text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+                    type="password"
+                    name="newPassword"
+                    value={isPassword?.newPassword}
+                    onChange={handleInputPassChange}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <div>
+                  <label className="block font-semibold text-base text-gray-900">
+                    Confirm Password
+                  </label>
+                  <input
+                    className="mt-2 w-full text-base rounded-lg px-2 py-1.5 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-900"
+                    type="password"
+                    name="confirmPassword"
+                    value={isPassword?.confirmPassword}
+                    onChange={handleInputPassChange}
+                  />
+                </div>
+              </div>
+
+              <div className="my-8 w-full h-0.5 bg-neutral-200"></div>
+
+              <div className="flex justify-center">
+                {!isChangePass ? (
+                  <button
+                    type="button"
+                    disabled={true}
+                    className="w-64 py-2.5 font-medium rounded-4xl transition cursor-pointer bg-black text-white hover:bg-white hover:text-black hover:outline-2
+                     disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-300 disabled:hover:text-gray-500"
+                  >
+                    Update
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="w-64 py-2.5 bg-black text-white font-medium rounded-4xl hover:bg-white hover:text-black hover:outline-2  transition cursor-pointer"
+                    onClick={handlePassword}
                   >
                     Update
                   </button>
